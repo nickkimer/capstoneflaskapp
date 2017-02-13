@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+	<h1>Enter some text {{title}}</h1>
+	<h2>(it will be converted to uppercase)</h2>
+	<form action="/" method="POST">
+    	<input type="text" name="text">
+    	<input type="submit" name="my-form" value="Send">
+	</form>
+	<h3>You searched for "{{text}}"</h3>
+	<h3>This is the results of the search: </h3> 
+	<div>
+		{% for item in result:%}
+		<li>
+			{{item[0]}}:{{item[1]}}
+		</li>
+		{% endfor %}
+	</div>
+</body>
+</html>
