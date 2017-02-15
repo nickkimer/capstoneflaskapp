@@ -1,7 +1,7 @@
 from app import app
 import gensim, logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-from flask import Flask, jsonify, request, render_template, redirect,json
+from flask import Flask, jsonify, request, render_template, redirect,json, url_for
 
 
 sentences = [['first', 'sentence'], ['second', 'sentence'],['this','is','the','third','sentence'],['this','is','the','fourth','sentence']]
@@ -24,7 +24,16 @@ def my_form_post():
         'text':text}
     return render_template("my-form.html",**templateData)
 
-
+# route for handling the login page logic
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            return redirect('/')
+    return render_template('login.html', error=error)
 
 @app.route('/index')
 def index():
