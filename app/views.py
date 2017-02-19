@@ -8,9 +8,30 @@ sentences = [['first', 'sentence'], ['second', 'sentence'],['this','is','the','t
 # train word2vec on the two sentences
 model = gensim.models.Word2Vec(sentences, min_count=1)
 
+#This is the document similarity setup
+from gensim import corpora, models, similarities
+dictionary = corpora.Dictionary.load('./static/capstone.dict')
+corpus = corpora.MmCorpus('./static/capstone.mm') 
+#lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
+lda = gensim.models.LdaModel.load('./static/lda_reddit.model')
+index = similarities.MatrixSimilarity.load('./static/capstone.index')
+
+
+
 @app.route('/')
 def my_form():
     return render_template("my-form.html")
+
+# route for handling the login page logic
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            return redirect('/')
+    return render_template('login.html', error=error)
 
 @app.route('/', methods=['GET','POST'])
 def my_form_post():
@@ -24,32 +45,29 @@ def my_form_post():
         'text':text}
     return render_template("my-form.html",**templateData)
 
-# route for handling the login page logic
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.'
-        else:
-            return redirect('/')
-    return render_template('login.html', error=error)
+@app.route('/docsim')
+def my_form2():
+    return render_template("my-form2.html")
 
-@app.route('/index')
-def index():
-    return "Hello, World!"
+@app.route('/docsim', methods=['GET','POST'])
+def my_form_post2():
+    if request.method=='POST':
+        text_sim = request.form['text_sim']
+        #processed_text = text.upper()
+        #processed_text = text_sim
+        doc = text_sim
+        vec_bow = dictionary.doc2bow(doc.lower().split())
+        vec_lda = lda[vec_bow] # convert the query to LDA space
+        sims = index[vec_lda]
+        sims = sorted(enumerate(sims), key=lambda item: -item[1])
+        result_doc = sims[1:10]
+        templateData2 = {
+        'result2':result_doc,
+        'text_sim':text_sim}
+    return render_template("my-form2.html",**templateData2)
 
 
-#@app.route('/similar/<username>')
-#def show_user_profile(username):
-#    # show the user profile for that user
-#    n = request.args.get('topn')
-#    if not n:
-#        n = 10
-#    else:
-#        n = int(n)
-#        
-#    return jsonify(model.most_similar([username], topn=n))
+
 
 @app.route('/similarity/<word1>/<word2>')
 def similarity(word1, word2):
