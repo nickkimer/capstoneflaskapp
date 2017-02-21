@@ -10,8 +10,8 @@ model = gensim.models.Word2Vec(sentences, min_count=1)
 
 #This is the document similarity setup
 from gensim import corpora, models, similarities
-dictionary = corpora.Dictionary.load('./static/capstone.dict')
-corpus = corpora.MmCorpus('./static/capstone.mm') 
+dictionary = corpora.Dictionary.load('./static/reddit.dict')
+corpus = corpora.MmCorpus('./static/reddit.mm')
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
 lda = gensim.models.LdaModel.load('./static/lda_reddit.model')
 index = similarities.MatrixSimilarity.load('./static/capstone.index')
@@ -83,6 +83,3 @@ def doesnt_match(words):
     # show the user profile for that user
     word_list = words.split("+")
     return jsonify({"doesnt_match": model.doesnt_match(word_list), "word_list": word_list})
-
-
-
