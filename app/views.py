@@ -19,8 +19,8 @@ index = similarities.MatrixSimilarity.load('./static/capstone.index')
 
 
 @app.route('/')
-def my_form():
-    return render_template("my-form.html")
+def home_page():
+    return render_template("template.html")
 
 # route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
@@ -31,15 +31,19 @@ def login():
             error = 'Invalid Credentials. Please try again.'
         else:
             return redirect('/')
-    return render_template('login.html', error=error)
+    return render_template('login_test.html', error=error)
 
-@app.route('/', methods=['GET','POST'])
+@app.route('/word2vec')
+def blankword2vec():
+    return render_template("my-form.html")
+
+@app.route('/word2vec', methods=['GET','POST'])
 def my_form_post():
     if request.method=='POST':
     	text = request.form['text']
     	#processed_text = text.upper()
     	processed_text = text
-    	templateData = {'title':'- We will display the most similar words from Word2Vec',
+    	templateData = {#'title':'- We will display the most similar words from Word2Vec',
     	#'result':json.dumps(model.most_similar([processed_text]),indent=4,separators=(',', ': ')),
     	'result':model.most_similar([processed_text]),
         'text':text}

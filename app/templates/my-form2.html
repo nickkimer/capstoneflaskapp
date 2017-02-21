@@ -1,20 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<body>
+
+{% extends 'template.html' %}
+
+{% block content %}
 
 	<h1>Document-Document Similarity Searcher</h1>
 	<form action="/docsim" method="POST">
 		<input type="text" name="text_sim">
-		<input type="submit" name="my-form" value="Send">
+		<input type="submit" name="my-form" value="Search">
 	</form>
-	<h3>You searched for "{{text_sim}}"</h3>
-	<h3>These are the results of the document similarity search: </h3>
-	<div>
-		{% for item in result2:%}
-		<li>
-			{{item[0]}}:{{item[1]}}
-		</li>
-		{% endfor %}
-	</div>
-</body>
-</html>
+
+{% if text_sim %}
+<h3>You searched for "{{text_sim}}"</h3>
+<h3>These are the results of the document similarity search: </h3>
+<div>
+	{% for item in result2:%}
+	<li>
+		{{item[0]}}:{{item[1]}}
+	</li>
+	{% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}
