@@ -11,7 +11,7 @@ model = gensim.models.Word2Vec(sentences, min_count=1)
 #This is the document similarity setup
 from gensim import corpora, models, similarities
 dictionary = corpora.Dictionary.load('./static/capstone.dict')
-corpus = corpora.MmCorpus('./static/capstone.mm') 
+corpus = corpora.MmCorpus('./static/capstone.mm')
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
 lda = gensim.models.LdaModel.load('./static/lda_reddit.model')
 index = similarities.MatrixSimilarity.load('./static/capstone.index')
@@ -66,8 +66,9 @@ def my_form_post2():
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
         result_doc = sims[1:10]
         templateData2 = {
-        'result2':result_doc,
-        'text_sim':text_sim}
+            'result2':result_doc,
+            'text_sim':text_sim
+        }
     return render_template("my-form2.html",**templateData2)
 
 
@@ -84,5 +85,10 @@ def doesnt_match(words):
     word_list = words.split("+")
     return jsonify({"doesnt_match": model.doesnt_match(word_list), "word_list": word_list})
 
+@app.route('/viewdoc/<docid>/<qid>')
+def viewdoc(docid,qid):
+    pass
 
-
+@app.route('/savedoc/<docid>/<qid>')
+def savedoc(docid,qid):
+    pass
