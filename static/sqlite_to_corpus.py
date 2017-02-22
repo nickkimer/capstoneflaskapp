@@ -10,7 +10,7 @@ import sqlite3
 import nltk
 
 ### DB comments to list
-conn = sqlite3.connect('mitre_2.db')
+conn = sqlite3.connect('mitre_2_full.db')
 conn.row_factory = lambda cursor, row: row[0]
 cur = conn.cursor()
 docs = cur.execute('SELECT comment FROM comments').fetchall()
