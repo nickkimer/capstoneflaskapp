@@ -5,7 +5,7 @@ Read already constructed db into gensim corups element
 '''
 
 import gensim
-from gensim import corpora
+from gensim import corpora, similarities, lda
 import sqlite3
 import nltk
 
@@ -13,7 +13,7 @@ import nltk
 conn = sqlite3.connect('mitre_2_full.db')
 conn.row_factory = lambda cursor, row: row[0]
 cur = conn.cursor()
-docs = cur.execute('SELECT comment FROM comments').fetchall()
+docs = cur.execute('SELECT body FROM documents').fetchall()
 
 ### Clean text
 ### add more stopwords or find other list? nltk possibly
@@ -33,3 +33,7 @@ dictionary.save('reddit.dict')
 
 corpus = [dictionary.doc2bow(text) for text in texts]
 corpora.MmCorpus.serialize('reddit.mm', corpus)
+
+### index
+index = similarities.MatrixSimilarity(lda[corpus]) # transform corpus to LDA space and index it
+index.save('reddit.index')

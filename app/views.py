@@ -14,7 +14,7 @@ dictionary = corpora.Dictionary.load('./static/reddit.dict')
 corpus = corpora.MmCorpus('./static/reddit.mm')
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
 lda = gensim.models.LdaModel.load('./static/lda_reddit.model')
-index = similarities.MatrixSimilarity.load('./static/capstone.index')
+index = similarities.MatrixSimilarity.load('./static/reddit.mm.index')
 
 
 
