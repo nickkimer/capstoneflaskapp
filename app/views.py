@@ -11,13 +11,10 @@ model = gensim.models.Word2Vec(sentences, min_count=1)
 
 #This is the document similarity setup
 from gensim import corpora, models, similarities
-<<<<<<< HEAD
+
 dictionary = corpora.Dictionary.load('./static/reddit.dict')
 corpus = corpora.MmCorpus('./static/reddit.mm')
-=======
-dictionary = corpora.Dictionary.load('./static/capstone.dict')
-corpus = corpora.MmCorpus('./static/capstone.mm')
->>>>>>> master
+
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
 lda = gensim.models.LdaModel.load('./static/lda_reddit.model')
 index = similarities.MatrixSimilarity.load('./static/reddit.index')
@@ -82,11 +79,11 @@ def my_form_post2():
 
 #Database writing and queries
 def get_titles(result_doc):
-    con = sql.connect("./static/mitre_2_full.db")    
+    con = sql.connect("./static/mitre_2_full.db")
     cur = con.cursor()
     titles=[0]*10
     indices = [0]*10
-    
+
     for i in range(0,10):
         indices[i] = result_doc[i][0]
     for i in range(0,10):
@@ -106,8 +103,6 @@ def doesnt_match(words):
     # show the user profile for that user
     word_list = words.split("+")
     return jsonify({"doesnt_match": model.doesnt_match(word_list), "word_list": word_list})
-<<<<<<< HEAD
-=======
 
 @app.route('/viewdoc/<docid>/<qid>')
 def viewdoc(docid,qid):
@@ -116,4 +111,3 @@ def viewdoc(docid,qid):
 @app.route('/savedoc/<docid>/<qid>')
 def savedoc(docid,qid):
     pass
->>>>>>> master
