@@ -2,6 +2,7 @@ from app import app
 import gensim, logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 from flask import Flask, jsonify, request, render_template, redirect,json, url_for
+import sqlite3 as sql
 
 
 sentences = [['first', 'sentence'], ['second', 'sentence'],['this','is','the','third','sentence'],['this','is','the','fourth','sentence']]
@@ -10,8 +11,13 @@ model = gensim.models.Word2Vec(sentences, min_count=1)
 
 #This is the document similarity setup
 from gensim import corpora, models, similarities
+<<<<<<< HEAD
 dictionary = corpora.Dictionary.load('./static/reddit.dict')
 corpus = corpora.MmCorpus('./static/reddit.mm')
+=======
+dictionary = corpora.Dictionary.load('./static/capstone.dict')
+corpus = corpora.MmCorpus('./static/capstone.mm')
+>>>>>>> master
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
 lda = gensim.models.LdaModel.load('./static/lda_reddit.model')
 index = similarities.MatrixSimilarity.load('./static/reddit.index')
@@ -64,12 +70,29 @@ def my_form_post2():
         vec_lda = lda[vec_bow] # convert the query to LDA space
         sims = index[vec_lda]
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
-        result_doc = sims[1:10]
+        result_doc = sims[0:10]
+        final = get_titles(result_doc)
+        for i in range(0,10):
+            result_doc[i] = result_doc[i] + (final[i],)
         templateData2 = {
         'result2':result_doc,
-        'text_sim':text_sim}
+        'text_sim':text_sim
+        }
     return render_template("my-form2.html",**templateData2)
 
+#Database writing and queries
+def get_titles(result_doc):
+    con = sql.connect("./static/mitre_2_full.db")    
+    cur = con.cursor()
+    titles=[0]*10
+    indices = [0]*10
+    
+    for i in range(0,10):
+        indices[i] = result_doc[i][0]
+    for i in range(0,10):
+        titles[i] = cur.execute('''SELECT title FROM posts WHERE rowid=?''',(indices[i],))
+        titles[i] = titles[i].fetchall()
+    return titles
 
 
 
@@ -83,3 +106,14 @@ def doesnt_match(words):
     # show the user profile for that user
     word_list = words.split("+")
     return jsonify({"doesnt_match": model.doesnt_match(word_list), "word_list": word_list})
+<<<<<<< HEAD
+=======
+
+@app.route('/viewdoc/<docid>/<qid>')
+def viewdoc(docid,qid):
+    pass
+
+@app.route('/savedoc/<docid>/<qid>')
+def savedoc(docid,qid):
+    pass
+>>>>>>> master
