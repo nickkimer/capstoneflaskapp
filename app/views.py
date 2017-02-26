@@ -11,11 +11,16 @@ model = gensim.models.Word2Vec(sentences, min_count=1)
 
 #This is the document similarity setup
 from gensim import corpora, models, similarities
+<<<<<<< HEAD
+dictionary = corpora.Dictionary.load('./static/reddit.dict')
+corpus = corpora.MmCorpus('./static/reddit.mm')
+=======
 dictionary = corpora.Dictionary.load('./static/capstone.dict')
 corpus = corpora.MmCorpus('./static/capstone.mm')
+>>>>>>> master
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
 lda = gensim.models.LdaModel.load('./static/lda_reddit.model')
-index = similarities.MatrixSimilarity.load('./static/capstone.index')
+index = similarities.MatrixSimilarity.load('./static/reddit.index')
 
 
 
@@ -28,7 +33,7 @@ def home_page():
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+        if request.form['username'] != 'admin' or request.form['password'] != 'guest':
             error = 'Invalid Credentials. Please try again.'
         else:
             return redirect('/')
@@ -101,6 +106,8 @@ def doesnt_match(words):
     # show the user profile for that user
     word_list = words.split("+")
     return jsonify({"doesnt_match": model.doesnt_match(word_list), "word_list": word_list})
+<<<<<<< HEAD
+=======
 
 @app.route('/viewdoc/<docid>/<qid>')
 def viewdoc(docid,qid):
@@ -109,3 +116,4 @@ def viewdoc(docid,qid):
 @app.route('/savedoc/<docid>/<qid>')
 def savedoc(docid,qid):
     pass
+>>>>>>> master
