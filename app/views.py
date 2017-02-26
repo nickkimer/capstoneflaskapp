@@ -104,9 +104,21 @@ def doesnt_match(words):
     word_list = words.split("+")
     return jsonify({"doesnt_match": model.doesnt_match(word_list), "word_list": word_list})
 
-@app.route('/viewdoc/<docid>/<qid>')
-def viewdoc(docid,qid):
-    pass
+@app.route('/view')
+def view_document():
+    post_id = request.args.get('id')
+    with sql.connect('static/mitre_2_full.db') as conn:
+        cur = conn.cursor()
+        result = conn.execute('''SELECT date, title, body, post_author FROM posts WHERE post_id=?''', (post_id,))
+        result = result.fetchone()
+        print(result)
+        date = result[0]
+        title = result[1]
+        body = result[2]
+        author = result[3]
+
+        templateData = {'title':title, 'body':body, 'date':date, 'author':author} 
+    return render_template("view_document.html", **templateData)
 
 @app.route('/savedoc/<docid>/<qid>')
 def savedoc(docid,qid):
