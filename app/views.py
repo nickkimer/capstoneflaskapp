@@ -87,7 +87,7 @@ def get_titles(result_doc):
     for i in range(0,10):
         indices[i] = result_doc[i][0]
     for i in range(0,10):
-        titles[i] = cur.execute('''SELECT title FROM posts WHERE rowid=?''',(indices[i],))
+        titles[i] = cur.execute('''SELECT title FROM documents WHERE rowid=?''',(indices[i],))
         titles[i] = titles[i].fetchall()
     return titles
 
