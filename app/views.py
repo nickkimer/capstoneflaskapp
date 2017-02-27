@@ -70,7 +70,7 @@ def my_form_post2():
         result_doc = sims[0:10]
         final = get_bodies(result_doc)
         for i in range(0,10):
-            result_doc[i] = result_doc[i] + (final[i],)
+            result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
         templateData2 = {
         'result2':result_doc,
         'text_sim':text_sim
@@ -90,7 +90,7 @@ def get_bodies(result_doc):
         bodies[i] = cur.execute('''SELECT body FROM documents_copy WHERE rowid=?''',(indices[i],))
         bodies[i] = bodies[i].fetchall()
         #Showing the first 100 characters of a string 
-        bodies[i] = bodies[i][0][0][0:100] + "..."
+        #bodies[i] = bodies[i][0][0][0:100] + "..." - moved to above inside of the function
     return bodies
 
 
