@@ -125,3 +125,15 @@ def view_document():
 @app.route('/savedoc/<docid>/<qid>')
 def savedoc(docid,qid):
     pass
+
+@app.route('/add')
+def add_entry():
+    return render_template("data_entry.html")
+
+@app.route('/visuals')
+def show_visuals():
+    return render_template("visuals.html")
+
+@app.route('/topics')
+def show_topics():
+    return render_template("topics.html")

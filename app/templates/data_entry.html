@@ -1,0 +1,16 @@
+{% extends 'template.html' %}
+
+{% block content %}
+
+
+
+<h1>Add a new entry</h1>
+<form action="{{ url_for('add_entry') }}", method=post class=add-entry>
+	<dl>
+		<dt>Please select the file you would like to add</dt>
+		<dd><input type=file size=30 name=filename></dd>
+		<dd><input type=submit value=Share></dd>
+	</dl>
+</form>
+
+{% endblock %}
