@@ -15,7 +15,7 @@
 <div>
 	{% for item in result2:%}
 	<li>
-		{{item[0]}}:{{item[1]}}:{{item[2]}} : <!-- Trigger/Open The Modal -->
+		{{item[0]}}:{{item[1]}}:{{item[3]}} : <!-- Trigger/Open The Modal -->
 			<p align="left">
 			<button id="myBtn">View Full Text</button>
 
@@ -30,10 +30,9 @@
 			    </div>
 			    <div class="modal-body">
 			      <p>{{ item[2] }}</p>
-			      <p>Continuation of the document...</p>
 			    </div>
 			    <div class="modal-footer">
-			      <h3>Save This Document</h3>
+			    	<p><a href="/docsim">Save This Document</a></p>
 			    </div>
 			  </div>
 

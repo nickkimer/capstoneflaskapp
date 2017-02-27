@@ -70,6 +70,7 @@ def my_form_post2():
         result_doc = sims[0:10]
         final = get_bodies(result_doc)
         for i in range(0,10):
+            result_doc[i] = result_doc[i] + (final[i][0][0],) 
             result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
         templateData2 = {
         'result2':result_doc,
