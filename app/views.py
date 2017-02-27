@@ -21,19 +21,20 @@ index = similarities.MatrixSimilarity.load('./static/reddit.index')
 
 
 
-@app.route('/')
+@app.route('/home')
 def home_page():
     return render_template("template.html")
 
+
 # route for handling the login page logic
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
         if request.form['username'] != 'admin' or request.form['password'] != 'guest':
             error = 'Invalid Credentials. Please try again.'
         else:
-            return redirect('/')
+            return redirect('/home')
     return render_template('login_test.html', error=error)
 
 @app.route('/word2vec')

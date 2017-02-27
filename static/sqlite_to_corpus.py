@@ -10,18 +10,19 @@ from gensim import corpora, similarities
 import sqlite3
 import nltk
 import pandas as pd
+from nltk.corpus import stopwords
 
 ### DB comments to list
 conn = sqlite3.connect('mitre_2_full.db')
 conn.row_factory = lambda cursor, row: row[0]
 cur = conn.cursor()
-documents = cur.execute('SELECT body FROM documents').fetchall()
+documents = cur.execute('SELECT body FROM documents_copy').fetchall()
 
 
 # documents = docs.doc_str.tolist()
 
 # remove common words and tokenize
-stoplist = set('for a of the and to in'.split())
+stoplist = set(stopwords.words('english'))
 texts = [[word for word in document.lower().split() if word not in stoplist]
          for document in documents]
 # remove words that appear only once

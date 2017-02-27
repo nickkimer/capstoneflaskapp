@@ -17,7 +17,7 @@
 	<li>
 		{{item[0]}}:{{item[1]}}:{{item[3]}} : <!-- Trigger/Open The Modal -->
 			<p align="left">
-			<button id="myBtn">View Full Text</button>
+			<button class = 'doc_btn' id='mybtn{{item[0]}}'>View Full Text</button>
 
 			<!-- The Modal -->
 			<div id="myModal" class="modal">
@@ -48,13 +48,14 @@
 var modal = document.getElementById('myModal');
 
 // Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+var btn = document.getElementsByClassName("doc_btn");
 
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
 // When the user clicks the button, open the modal
 btn.onclick = function() {
+		console.log(this)
     modal.style.display = "block";
 }
 
