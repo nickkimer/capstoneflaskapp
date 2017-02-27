@@ -70,7 +70,7 @@ def my_form_post2():
         result_doc = sims[0:10]
         final = get_bodies(result_doc)
         for i in range(0,10):
-            result_doc[i] = result_doc[i] + (final[i][0][0],) 
+            result_doc[i] = result_doc[i] + (final[i][0][0],)
             result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
         templateData2 = {
         'result2':result_doc,
@@ -90,7 +90,7 @@ def get_bodies(result_doc):
     for i in range(0,10):
         bodies[i] = cur.execute('''SELECT body FROM documents_copy WHERE rowid=?''',(indices[i],))
         bodies[i] = bodies[i].fetchall()
-        #Showing the first 100 characters of a string 
+        #Showing the first 100 characters of a string
         #bodies[i] = bodies[i][0][0][0:100] + "..." - moved to above inside of the function
     return bodies
 
@@ -107,8 +107,8 @@ def doesnt_match(words):
     word_list = words.split("+")
     return jsonify({"doesnt_match": model.doesnt_match(word_list), "word_list": word_list})
 
-@app.route('/view')
-def view_document():
+@app.route('/view/<id>')
+def view_document(id):
     post_id = request.args.get('id')
     with sql.connect('static/mitre_2_full.db') as conn:
         cur = conn.cursor()
@@ -120,7 +120,7 @@ def view_document():
         body = result[2]
         author = result[3]
 
-        templateData = {'title':title, 'body':body, 'date':date, 'author':author} 
+        templateData = {'title':title, 'body':body, 'date':date, 'author':author}
     return render_template("view_document.html", **templateData)
 
 @app.route('/savedoc/<docid>/<qid>')
