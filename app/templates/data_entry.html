@@ -5,6 +5,15 @@
 
 
 <h1>Add a new entry</h1>
+
+<form action="/data_entry" method="POST">
+	<p> Question <input type = 'text', name = 'Question', style='width: 500px;' /></p>
+	<p> Date <input type = 'date', name = 'Date' /></p>
+	<p> ID <input type = 'text', name = 'Question ID' /></p>
+	<p> Responder <input type = 'text', name = 'Analyst Name' /></p>
+	<p> Response <input type = 'text', name = 'Response', style='width: 500px;' /></p>
+</form>
+
 <form action="{{ url_for('add_entry') }}", method=post class=add-entry>
 	<dl>
 		<dt>Please select the file you would like to add</dt>
