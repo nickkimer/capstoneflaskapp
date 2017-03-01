@@ -14,3 +14,4 @@ The gensim files (LDA model, corpus, indexing, dict, etc.) were trained locally 
 (6) Do something with button to show/hide menu after removing landing page information (Nick)
 (7) Dynamically Update model (Matt)
 (8) Start paper
+(9) Clean the corpus with stop words (All)
