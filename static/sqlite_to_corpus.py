@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Read already constructed db into gensim corups element
 *** Currently using sample database ***
@@ -34,8 +35,15 @@ for text in texts:
 texts = [[token for token in text if frequency[token] > 1]
          for text in texts]
 from pprint import pprint  # pretty-printer
-#pprint(texts)
+# pprint(texts)
 
+# Word2Vec model
+#nltk.download()
+#texts = unicode(texts, 'utf-8')
+model = gensim.models.Word2Vec(texts, min_count = 1)
+model.save('word2vec_reddit.model')
+
+# Create dictionary
 dictionary = corpora.Dictionary(texts)
 dictionary.save('reddit.dict')  # store the dictionary, for future reference
 print(dictionary)
@@ -69,5 +77,5 @@ vec_lda = lda[vec_bow] # convert the query to LDA space
 sims = index[vec_lda]
 
 sims = sorted(enumerate(sims), key=lambda item: -item[1])
-print(sims[1:10])
-print(documents[751])
+# print(sims[1:10])
+# print(documents[751])

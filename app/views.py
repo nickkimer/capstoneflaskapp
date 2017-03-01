@@ -3,23 +3,24 @@ import gensim, logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 from flask import Flask, jsonify, request, render_template, redirect,json, url_for
 import sqlite3 as sql
+from gensim import models
 
 
-sentences = [['first', 'sentence'], ['second', 'sentence'],['this','is','the','third','sentence'],['this','is','the','fourth','sentence']]
+# sentences = [['first', 'sentence'], ['second', 'sentence'],['this','is','the','third','sentence'],['this','is','the','fourth','sentence']]
 # train word2vec on the two sentences
-model = gensim.models.Word2Vec(sentences, min_count=1)
+# model = gensim.models.Word2Vec(sentences, min_count=1)
 
 #This is the document similarity setup
 from gensim import corpora, models, similarities
 
 dictionary = corpora.Dictionary.load('./static/reddit.dict')
 corpus = corpora.MmCorpus('./static/reddit.mm')
+model = models.Word2Vec.load('./static/word2vec_reddit.model')
+
 
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
 lda = gensim.models.LdaModel.load('./static/lda_reddit.model')
 index = similarities.MatrixSimilarity.load('./static/reddit.index')
-
-
 
 @app.route('/home')
 def home_page():
