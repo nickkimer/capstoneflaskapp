@@ -54,6 +54,10 @@ def my_form_post():
         'text':text}
     return render_template("my-form.html",**templateData)
 
+@app.route('/savedoc', methods=['POST'])
+def addRegion():
+    return render_template("save_doc")
+
 @app.route('/docsim')
 def my_form2():
     return render_template("my-form2.html")
@@ -125,9 +129,6 @@ def view_document(id):
         templateData = {'title':title, 'body':body, 'date':date, 'author':author}
     return render_template("view_document.html", **templateData)
 
-@app.route('/savedoc/<docid>/<qid>')
-def savedoc(docid,qid):
-    pass
 
 @app.route('/add')
 def add_entry():
