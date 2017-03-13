@@ -6,12 +6,13 @@
 
 <h1>Add a new entry</h1>
 
-<form action="/data_entry" method="POST">
+<form action="/add" method="POST">
 	<p> Question <input type = 'text', name = 'Question', style='width: 500px;' /></p>
 	<p> Date <input type = 'date', name = 'Date' /></p>
-	<p> ID <input type = 'text', name = 'Question ID' /></p>
-	<p> Responder <input type = 'text', name = 'Analyst Name' /></p>
+	<p> ID <input type = 'text', name = 'Question_ID' /></p>
+	<p> Responder <input type = 'text', name = 'Analyst_Name' /></p>
 	<p> Response <input type = 'text', name = 'Response', style='width: 500px;' /></p>
+	<dd><input type=submit value='Add File'></dd>
 </form>
 
 <form action="{{ url_for('add_entry') }}", method=post class=add-entry>
