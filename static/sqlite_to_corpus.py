@@ -97,5 +97,5 @@ vec_lda = lda[vec_bow] # convert the query to LDA space
 sims = index[vec_lda]
 
 sims = sorted(enumerate(sims), key=lambda item: -item[1])
-print(sims[1:10])
-#print(documents[751])
+# print(sims[1:10])
+# print(documents[131])

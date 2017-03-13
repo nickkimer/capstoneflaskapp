@@ -92,7 +92,7 @@ def get_bodies(result_doc):
     indices = [0]*10
 
     for i in range(0,10):
-        indices[i] = result_doc[i][0]
+        indices[i] = result_doc[i][0] + 1 
     for i in range(0,10):
         bodies[i] = cur.execute('''SELECT body FROM documents_copy WHERE rowid=?''',(indices[i],))
         bodies[i] = bodies[i].fetchall()
@@ -148,7 +148,7 @@ def add_entry():
         cur = conn.cursor()
         cur.execute('INSERT INTO documents_copy VALUES(?,?,?,?,?,?,?)',(new[0],new[1],new[2],new[3],new[4],new[5],new[6]))
         conn.commit()
-        
+
     return render_template("data_entry.html")
 
 @app.route('/visuals')
