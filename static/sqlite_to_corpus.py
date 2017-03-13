@@ -12,6 +12,10 @@ import sqlite3
 import nltk
 import pandas as pd
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+import re
+
+from cleaner.py import cleaner
 
 ### DB comments to list
 conn = sqlite3.connect('mitre_2_full.db')
@@ -21,6 +25,7 @@ documents = cur.execute('SELECT body FROM documents_copy').fetchall()
 
 
 # documents = docs.doc_str.tolist()
+### Text Cleaning
 
 # remove common words and tokenize
 stoplist = set(stopwords.words('english'))
@@ -34,8 +39,23 @@ for text in texts:
         frequency[token] += 1
 texts = [[token for token in text if frequency[token] > 1]
          for text in texts]
+# quotes, hyphens, underscores,slashes
+texts = [[word.replace('"', ' ').replace("\'", '').replace('_', ' ').replace('-', ' ') for word in text] for text in texts]
+
+stemmer = PorterStemmer()
+
+for text in texts:
+    for word in text:
+        word = (stemmer.stem(word))
+
+### Other Option using other cleaning code
+# for text in texts:
+#    apply.cleaner()
+
+
 from pprint import pprint  # pretty-printer
 # pprint(texts)
+
 
 # Word2Vec model
 #nltk.download()

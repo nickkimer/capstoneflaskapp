@@ -130,8 +130,25 @@ def view_document(id):
     return render_template("view_document.html", **templateData)
 
 
-@app.route('/add')
+@app.route('/add', methods=['GET','POST'])
 def add_entry():
+
+    new = [None]*7
+
+    if request.method=='POST':
+        new[0] = 'New'
+        new[1] = request.form['Question_ID']
+        new[2] = request.form['Date']
+        new[3] = request.form['Question']
+        new[4] = request.form['Analyst_Name']
+        new[5] = request.form['Response']
+        new[6] = 'NA'
+
+    with sql.connect('static/mitre_2_full.db') as conn:
+        cur = conn.cursor()
+        cur.execute('INSERT INTO documents_copy VALUES(?,?,?,?,?,?,?)',(new[0],new[1],new[2],new[3],new[4],new[5],new[6]))
+        conn.commit()
+        
     return render_template("data_entry.html")
 
 @app.route('/visuals')
