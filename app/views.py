@@ -54,9 +54,9 @@ def my_form_post():
         'text':text}
     return render_template("my-form.html",**templateData)
 
-@app.route('/savedoc', methods=['POST'])
+@app.route('/savedoc', methods=['GET','POST'])
 def addRegion():
-    return render_template("save_doc")
+    return render_template("save-doc.html")
 
 @app.route('/docsim')
 def my_form2():

@@ -2,10 +2,13 @@
 
 {% block content %}
 
-{% if text_sim %}
+<h2> Saved Documents </h2>
+<div id="myDiv2">
 
 
-{% endif %}
+<script>
+document.getElementById("myDiv2").innerHTML=sessionStorage.getItem("page1content");
+</script>
 
 
 {% endblock %}

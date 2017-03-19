@@ -180,9 +180,17 @@ $('document').ready(function() {
         alert("Document #" + $('.doc-id', $tr).text() + " Saved Successfully"); 
         //targetArea.append("Document ID" + $('.doc-id',$tr).text() + " - " + $('.doc-short',$tr).text())
         $('#myTable > tbody:last-child').append('<tr><td>' + $('.doc-id',$tr).text() + '</td><td>' + $('.sim-score', $tr).text()+ '</td><td>'+ $('.doc-short',$tr).text()+ '</td></tr>');       
+        var pageContent = document.getElementById("selection").innerHTML;
+        sessionStorage.setItem("page1content",pageContent);
     });
 });
 </script>
+
+<!-- session store the saved documents table to clone onto the other page  EDIT: THIS WAS MOVED TO INSIDE OF THE BUTTON CLICK SCRIPT ABOVE -->
+<!-- <script>
+var pageContent = document.getElementById("selection").innerHTML;
+sessionStorage.setItem("page1content",pageContent);
+</script> -->
 
 {% endif %}
 
