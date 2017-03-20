@@ -24,7 +24,7 @@ index = similarities.MatrixSimilarity.load('./static/reddit.index')
 
 @app.route('/home')
 def home_page():
-    return render_template("template.html")
+    return render_template("pyldavis_test.html")
 
 
 # route for handling the login page logic
