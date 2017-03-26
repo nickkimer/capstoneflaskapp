@@ -151,10 +151,142 @@ def add_entry():
 
     return render_template("data_entry.html")
 
-@app.route('/visuals')
-def show_visuals():
-    return render_template("visuals.html")
-
 @app.route('/topics')
 def show_topics():
     return render_template("topics.html")
+
+@app.route('/visuals')
+def show_visuals():
+    topic_topic = generate_visual()
+    return render_template("visuals.html")
+
+def generate_visual():
+    doc_topic = build_document_topics()
+    rows = doc_topic.shape[0] 
+    cols = doc_topic.shape[1]
+
+    threshold = .01
+    for i in range(0,rows):
+        for j in range(0, cols):
+            if doc_topic[i,j] > threshold:
+                doc_topic[i,j] = 1
+            else:
+                doc_topic[i,j] = 0
+
+    # calculate marginal probabilities
+    marginal_prob = doc_topic.sum(axis=0)/rows
+
+    topic_topic = np.zeros([cols,cols])
+    # calculate joint probabilities
+    for i in range(0,rows):
+        for j in range(0,cols):
+            for k in range(0,cols):
+                if doc_topic[i,j] == 1 and doc_topic[i,k] ==1:
+                    # if j != k:
+                    topic_topic[j,k] = topic_topic[j,k] + 1
+
+    topic_topic = topic_topic / rows
+
+    # find associated topics
+    associated = [[]] * cols
+    threshold = 5
+    for i in range(0, cols):
+        for j in range(0, cols):
+            topic_topic[i,j] = topic_topic[i,j] / (marginal_prob[i] * marginal_prob[j])
+            if topic_topic[i,j] > threshold:
+                if associated[i] == []:
+                    associated[i] = [j]
+                else:
+                    associated[i].append(j)
+
+    templateData = {'debug': associated}
+    generate_topic_nodes(associated)
+    return topic_topic
+
+def get_document_topics(doc):
+    vec_bow = dictionary.doc2bow(doc.split())
+    vec_lda = lda[vec_bow] # convert the query to LDA space
+    sims = index[vec_lda]
+    doc_topics = []
+    sims = sorted(enumerate(sims), key=lambda item: -item[1])
+    topics = lda.get_document_topics(sims)
+    return topics
+
+
+def build_document_topics():
+
+    with sql.connect('static/mitre_2_full.db') as conn:
+        cur = conn.cursor()
+        result = conn.execute('''SELECT body FROM posts ''')
+        result = result.fetchall()
+    
+    num_docs = len(result)
+    doc_topic_matrix = np.zeros([num_docs,100])
+
+    for i in range(0,num_docs-1):
+        topics = get_document_topics(result[i][0])
+        for each in topics:
+            doc_topic_matrix[i][each[0]] = each[1]    
+
+    return doc_topic_matrix
+
+def generate_topic_nodes(topic_associations):
+    with open(os.path.join(app.root_path, 'static/js/nodes.json'), 'w') as f:
+        out = """{\n"nodes":[\n"""
+
+        num_topics = 100
+
+        for i in range(0 ,num_topics):
+            terms = get_topic_terms(i, lda, dictionary)
+            if i == 0:
+                out += """\t{"name":\"""" + terms[0][0] + " " + terms[1][0] + """","group":""" + str(i)+"""}"""
+            else:
+                out += """,\n\t{"name":\"""" + terms[0][0] + " " + terms[1][0] + """","group":""" + str(i)+"""}"""
+                                    
+        out += """],\n"links":["""
+        first = True
+        for i in range(0,num_topics):
+            for association in topic_associations[i]:
+                if first:
+                    out += """\n\t{"source":""" + str(i) + ""","target":""" + str(association) + ""","weight":1}"""
+                    first = False
+                else:
+                    out += """,\n\t{"source":""" + str(i) + ""","target":""" + str(association) + ""","weight":1}"""
+        out += """]\n}\n"""
+        f.write(out)    
+
+def generate_nodes_file(search_results):
+    with open(os.path.join(app.root_path, 'static/js/nodes.json'), 'w') as f:
+        out = """{\n"nodes":[\n"""
+
+        out += """\t{"name":"Master","group":1}"""
+        topic_num = 2
+        node_num = 2
+        links = []
+
+        for item in search_results:
+            out += """,\n\t{"name":"topic""" + str(topic_num) + """","group":""" + str(topic_num)+"""}"""
+            term_num=1
+            # links = []
+            for terms in item[1]:
+                for each in terms:
+                    text = re.sub(r'"',"",each[0])
+                    node_num=node_num+1
+                    out += """,\n\t{"name":\"""" +  text + """\","group":""" + str(topic_num) + """}"""
+                    # links.append([topic_num, each[0]])
+                    term_num=term_num+1
+                    
+            topic_num=topic_num+1
+            node_num=node_num+1
+
+            links.append([1, topic_num])
+
+        out += """],\n"links":["""
+        out += """\n\t{"source":""" + str(0) + ""","target":""" + str(0) + ""","weight":1}"""
+
+        for each in links:
+            out += """,\n\t{"source":""" + str(each[0]) + ""","target":""" + str(each[1]) + ""","weight":1}"""
+
+        out += """]\n}\n"""
+
+        f.write(out)
