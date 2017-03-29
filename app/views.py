@@ -4,6 +4,10 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 from flask import Flask, jsonify, request, render_template, redirect,json, url_for
 import sqlite3 as sql
 from gensim import models
+import numpy as np
+import os, re
+
+
 
 
 # sentences = [['first', 'sentence'], ['second', 'sentence'],['this','is','the','third','sentence'],['this','is','the','fourth','sentence']]
@@ -157,10 +161,14 @@ def show_topics():
 
 @app.route('/visuals')
 def show_visuals():
-    topic_topic = generate_visual()
-    return render_template("visuals.html")
+    associated = find_associated()
+    filename = 'static/js/nodes.json'
+    generate_network_file(associated, filename)
+    terms = get_topic_terms(0, lda, dictionary)
+    templateData = {'debug':terms[0]}
+    return render_template("visuals.html", **templateData)
 
-def generate_visual():
+def find_associated():
     doc_topic = build_document_topics()
     rows = doc_topic.shape[0] 
     cols = doc_topic.shape[1]
@@ -200,8 +208,8 @@ def generate_visual():
                     associated[i].append(j)
 
     templateData = {'debug': associated}
-    generate_topic_nodes(associated)
-    return topic_topic
+
+    return associated
 
 def get_document_topics(doc):
     vec_bow = dictionary.doc2bow(doc.split())
@@ -230,63 +238,40 @@ def build_document_topics():
 
     return doc_topic_matrix
 
-def generate_topic_nodes(topic_associations):
-    with open(os.path.join(app.root_path, 'static/js/nodes.json'), 'w') as f:
+def generate_network_file(associations, filename):
+    with open(os.path.join(app.root_path, filename), 'w') as f:
         out = """{\n"nodes":[\n"""
 
-        num_topics = 100
+        num_topics = len(associations)
 
-        for i in range(0 ,num_topics):
-            terms = get_topic_terms(i, lda, dictionary)
-            if i == 0:
-                out += """\t{"name":\"""" + terms[0][0] + " " + terms[1][0] + """","group":""" + str(i)+"""}"""
-            else:
-                out += """,\n\t{"name":\"""" + terms[0][0] + " " + terms[1][0] + """","group":""" + str(i)+"""}"""
-                                    
-        out += """],\n"links":["""
         first = True
-        for i in range(0,num_topics):
-            for association in topic_associations[i]:
+        for node_id in range(0 ,num_topics):
+            if associations[node_id] != []:
+                terms = get_topic_terms(node_id, lda, dictionary)
                 if first:
-                    out += """\n\t{"source":""" + str(i) + ""","target":""" + str(association) + ""","weight":1}"""
+                    out += """\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
                     first = False
                 else:
-                    out += """,\n\t{"source":""" + str(i) + ""","target":""" + str(association) + ""","weight":1}"""
+                    out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0]
+                    # out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
+                                    
+        out += """],\n"edges":["""
+        first = True
+        edge_id = 0
+        for node_id in range(0,num_topics):
+            for association in associations[node_id]:
+                if node_id != association:
+                    if first:
+                        out += """\n\t{\"from\":""" + str(node_id) + """,\"to\":""" + str(association) + "}"
+                        first = False
+                    else:
+                        out += """,\n\t{\"from\":""" + str(node_id) + """,\"to\":""" + str(association) + "}"
+                    edge_id = edge_id +1
         out += """]\n}\n"""
-        f.write(out)    
+        f.write(out)  
 
-def generate_nodes_file(search_results):
-    with open(os.path.join(app.root_path, 'static/js/nodes.json'), 'w') as f:
-        out = """{\n"nodes":[\n"""
-
-        out += """\t{"name":"Master","group":1}"""
-        topic_num = 2
-        node_num = 2
-        links = []
-
-        for item in search_results:
-            out += """,\n\t{"name":"topic""" + str(topic_num) + """","group":""" + str(topic_num)+"""}"""
-            term_num=1
-            # links = []
-            for terms in item[1]:
-                for each in terms:
-                    text = re.sub(r'"',"",each[0])
-                    node_num=node_num+1
-                    out += """,\n\t{"name":\"""" +  text + """\","group":""" + str(topic_num) + """}"""
-                    # links.append([topic_num, each[0]])
-                    term_num=term_num+1
-                    
-            topic_num=topic_num+1
-            node_num=node_num+1
-
-            links.append([1, topic_num])
-
-        out += """],\n"links":["""
-        out += """\n\t{"source":""" + str(0) + ""","target":""" + str(0) + ""","weight":1}"""
-
-        for each in links:
-            out += """,\n\t{"source":""" + str(each[0]) + ""","target":""" + str(each[1]) + ""","weight":1}"""
-
-        out += """]\n}\n"""
-
-        f.write(out)
+def get_topic_terms(topicId, model, dictionary):
+    topic_terms = []
+    topic_terms = lda.get_topic_terms(topicId) 
+    topic_terms = list(map(lambda each: (dictionary.get(each[0]), each[1]), topic_terms))
+    return topic_terms
