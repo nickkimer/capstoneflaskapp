@@ -6,6 +6,7 @@ import sqlite3 as sql
 from gensim import models
 import numpy as np
 import os, re
+import gensim.matutils
 
 
 
@@ -17,18 +18,19 @@ import os, re
 #This is the document similarity setup
 from gensim import corpora, models, similarities
 
-dictionary = corpora.Dictionary.load('./static/reddit.dict')
-corpus = corpora.MmCorpus('./static/reddit.mm')
+dictionary = corpora.Dictionary.load('./static/FINAL.dict')
+corpus = corpora.MmCorpus('./static/FINAL.mm')
 model = models.Word2Vec.load('./static/word2vec_reddit.model')
 
 
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
-lda = gensim.models.LdaModel.load('./static/lda_reddit.model')
-index = similarities.MatrixSimilarity.load('./static/reddit.index')
+lda = gensim.models.LdaModel.load('./static/FINAL50.model')
+#index = similarities.MatrixSimilarity.load('./static/reddit.index')
+index = np.load('.static/FINALH50.npy')
 
 @app.route('/home')
 def home_page():
-    return render_template("pyldavis_test.html")
+    return render_template("pyldavis_final50.html")
 
 
 # route for handling the login page logic
@@ -70,14 +72,22 @@ def my_form2():
 def my_form_post2():
     if request.method=='POST':
         text_sim = request.form['text_sim']
-        #processed_text = text.upper()
-        #processed_text = text_sim
         doc = text_sim
+        #vec_bow = dictionary.doc2bow(doc.lower().split())
+        #vec_lda = lda[vec_bow] # convert the query to LDA space
+        #sims = index[vec_lda]
+        #sims = sorted(enumerate(sims), key=lambda item: -item[1])
+        #result_doc = sims[0:10]
         vec_bow = dictionary.doc2bow(doc.lower().split())
-        vec_lda = lda[vec_bow] # convert the query to LDA space
-        sims = index[vec_lda]
+        vec_lda = lda[vec_bow]
+        # query index
+        q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda50.num_topics))
+        sims = np.sqrt(0.5 * np.sum((q - indexH50)**2, axis=1))
+
+        #HOW MANY RESUlTS FOR SIMS? 
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
-        result_doc = sims[0:10]
+        result_doc = list(reversed(sims[-10:len(sims)]))
+
         final = get_bodies(result_doc)
         for i in range(0,10):
             result_doc[i] = result_doc[i] + (final[i][0][0],)
