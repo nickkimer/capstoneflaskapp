@@ -2,63 +2,43 @@
 
 {% block content %}
 
-<script src="http://d3js.org/d3.v2.min.js?2.9.3"></script>
+<p>Debug</p>
+<p>{{debug}}</p>
 
-<script>
+<div id="mynetwork"></div>
 
-var width = 1000,
-    height = 2000
+ <script type="text/javascript">
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("style", "margin-left: 250px");
 
-var force = d3.layout.force()
-    .gravity(.1)
-    .distance(500)
-    .charge(-500)
-    .size([width, height]);
+    function readTextFile(file, callback) {
+        var rawFile = new XMLHttpRequest();
+        rawFile.overrideMimeType("application/json");
+        rawFile.open("GET", file, true);
+        rawFile.onreadystatechange = function() {
+            if (rawFile.readyState === 4 && rawFile.status == "200") {
+                callback(rawFile.responseText);
+            }
+        }
+        rawFile.send(null);
+    }
 
-d3.json("{{url_for('static', filename='js/nodes.json')}}", function(json) {
-  force
-      .nodes(json.nodes)
-      .links(json.links)
-      .start();
+    readTextFile("{{url_for('static', filename='js/nodes.json')}}", function(text){
+        var data = JSON.parse(text);
+        console.log(data)
 
-  var link = svg.selectAll(".link")
-      .data(json.links)
-    .enter().append("line")
-      .attr("class", "link")
-    .style("stroke-width", function(d) { return Math.sqrt(d.weight); })
-    .style("stroke", "grey");
+        var nodes = data.nodes;
+        var edges = data.edges;
 
-  var node = svg.selectAll(".node")
-      .data(json.nodes)
-    .enter().append("g")
-      .attr("class", "node")
-      .call(force.drag);
+        var container = document.getElementById('mynetwork');
 
-  node.append("circle")
-      .attr("r","5");
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var options = {physics: {enabled: true}};
 
-  node.append("text")
-      .attr("dx", 12)
-      .attr("dy", ".35em")
-      .attr("fill","black")
-      .text(function(d) { return d.name });
+        var network = new vis.Network(container, data, options);
 
-  force.on("tick", function() {
-    link.attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
-
-    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-  });
-});
-
-</script>
-
+    });
 
 {% endblock %}
