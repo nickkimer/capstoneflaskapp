@@ -26,7 +26,7 @@ model = models.Word2Vec.load('./static/word2vec_reddit.model')
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
 lda = gensim.models.LdaModel.load('./static/FINAL50.model')
 #index = similarities.MatrixSimilarity.load('./static/reddit.index')
-index = np.load('.static/FINALH50.npy')
+index = np.load('./static/FINAL50.index')
 
 @app.route('/home')
 def home_page():
@@ -84,7 +84,7 @@ def my_form_post2():
         q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda50.num_topics))
         sims = np.sqrt(0.5 * np.sum((q - indexH50)**2, axis=1))
 
-        #HOW MANY RESUlTS FOR SIMS? 
+        #HOW MANY RESUlTS FOR SIMS?
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
         result_doc = list(reversed(sims[-10:len(sims)]))
 
@@ -106,7 +106,7 @@ def get_bodies(result_doc):
     indices = [0]*10
 
     for i in range(0,10):
-        indices[i] = result_doc[i][0] + 1 
+        indices[i] = result_doc[i][0] + 1
     for i in range(0,10):
         bodies[i] = cur.execute('''SELECT body FROM documents_copy WHERE rowid=?''',(indices[i],))
         bodies[i] = bodies[i].fetchall()
@@ -180,7 +180,7 @@ def show_visuals():
 
 def find_associated():
     doc_topic = build_document_topics()
-    rows = doc_topic.shape[0] 
+    rows = doc_topic.shape[0]
     cols = doc_topic.shape[1]
 
     threshold = .01
@@ -237,14 +237,14 @@ def build_document_topics():
         cur = conn.cursor()
         result = conn.execute('''SELECT body FROM posts ''')
         result = result.fetchall()
-    
+
     num_docs = len(result)
     doc_topic_matrix = np.zeros([num_docs,100])
 
     for i in range(0,num_docs-1):
         topics = get_document_topics(result[i][0])
         for each in topics:
-            doc_topic_matrix[i][each[0]] = each[1]    
+            doc_topic_matrix[i][each[0]] = each[1]
 
     return doc_topic_matrix
 
@@ -264,7 +264,7 @@ def generate_network_file(associations, filename):
                 else:
                     out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0]
                     # out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
-                                    
+
         out += """],\n"edges":["""
         first = True
         edge_id = 0
@@ -278,10 +278,10 @@ def generate_network_file(associations, filename):
                         out += """,\n\t{\"from\":""" + str(node_id) + """,\"to\":""" + str(association) + "}"
                     edge_id = edge_id +1
         out += """]\n}\n"""
-        f.write(out)  
+        f.write(out)
 
 def get_topic_terms(topicId, model, dictionary):
     topic_terms = []
-    topic_terms = lda.get_topic_terms(topicId) 
+    topic_terms = lda.get_topic_terms(topicId)
     topic_terms = list(map(lambda each: (dictionary.get(each[0]), each[1]), topic_terms))
     return topic_terms
