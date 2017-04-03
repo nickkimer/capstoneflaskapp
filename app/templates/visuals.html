@@ -2,13 +2,24 @@
 
 {% block content %}
 
+ <script type="text/javascript" src="{{url_for('static', filename='js/vis.js')}}"></script>
+<link href="{{url_for('static', filename='js/vis.css')}}" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+    #mynetwork {
+        width: 1000px;
+        height: 1000px;
+        border: 1px solid lightgray;
+    }
+</style>
+
 <p>Debug</p>
 <p>{{debug}}</p>
 
 <div id="mynetwork"></div>
+<script type="text/javascript" src="{{url_for('static', filename='js/nodes.json')}}"></script>
 
  <script type="text/javascript">
-
 
     function readTextFile(file, callback) {
         var rawFile = new XMLHttpRequest();
@@ -22,6 +33,7 @@
         rawFile.send(null);
     }
 
+    //usage:
     readTextFile("{{url_for('static', filename='js/nodes.json')}}", function(text){
         var data = JSON.parse(text);
         console.log(data)
@@ -29,16 +41,27 @@
         var nodes = data.nodes;
         var edges = data.edges;
 
+         // create a network
         var container = document.getElementById('mynetwork');
 
+         // provide the data in the vis format
         var data = {
             nodes: nodes,
             edges: edges
         };
-        var options = {physics: {enabled: true}};
+        var options = {
+            layout: {hierarchical: {enabled: false}},
+            nodes: {shape: 'text', fixed: false},
+            edges: {color: {color: 'rgba(0,0,0,.3)', highlight: 'rgba(0,0,255,.7)'}}
 
+        };
+
+        // initialize your network!
         var network = new vis.Network(container, data, options);
 
     });
+   
+</script>
+
 
 {% endblock %}

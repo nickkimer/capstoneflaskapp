@@ -1,0 +1,15 @@
+{
+"nodes":[
+	{"id":0,"label":"marine navy"},
+	{"id":11,"label":"carriers fleet"},
+	{"id":14,"label":"star death"},
+	{"id":18,"label":"war navy"},
+	{"id":20,"label":"french russian"},
+	{"id":22,"label":"guns gun"},
+	{"id":32,"label":"defensive submarine"},
+	{"id":37,"label":"ships line"},
+	{"id":46,"label":"war interesting"}],
+"edges":[
+	{"from":20,"to":22},
+	{"from":22,"to":20}]
+}
