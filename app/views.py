@@ -73,31 +73,31 @@ def my_form_post2():
     if request.method=='POST':
         text_sim = request.form['text_sim']
         doc = text_sim
-        #vec_bow = dictionary.doc2bow(doc.lower().split())
-        #vec_lda = lda[vec_bow] # convert the query to LDA space
-        #sims = index[vec_lda]
+        vec_bow = dictionary.doc2bow(doc.lower().split())
+        vec_lda = lda[vec_bow] # convert the query to LDA space
+        sims = index[vec_lda]
         #sims = sorted(enumerate(sims), key=lambda item: -item[1])
         #result_doc = sims[0:10]
-        vec_bow = dictionary.doc2bow(doc.lower().split())
-        vec_lda = lda[vec_bow]
+        # vec_bow = dictionary.doc2bow(doc.lower().split())
+        # vec_lda = lda[vec_bow]
         # query index
-        q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda.num_topics)) # length 50
+        # q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda.num_topics)) # length 50
         # sims = np.sqrt(0.5 * np.sum((q - index)**2, axis=1))
-        debug = (q - index)
+        # debug = (q - index)
         #HOW MANY RESUlTS FOR SIMS?
-        # sims = sorted(enumerate(sims), key=lambda item: -item[1])
-        # result_doc = list(reversed(sims[-10:len(sims)]))
+        sims = sorted(enumerate(sims), key=lambda item: -item[1])
+        result_doc = list(reversed(sims[-10:len(sims)]))
 
-        # final = get_bodies(result_doc)
-        # for i in range(0,10):
-            # result_doc[i] = result_doc[i] + (final[i][0][0],)
-            # result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
+        final = get_bodies(result_doc)
+        for i in range(0,10):
+            result_doc[i] = result_doc[i] + (final[i][0][0],)
+            result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
         templateData2 = {
-        # 'result2':result_doc,
-        # 'text_sim':text_sim,
-        'debug':debug
+        'result2':result_doc,
+        'text_sim':text_sim,
+        # 'debug':debug
         }
-    return render_template("debug.html",**templateData2)
+    return render_template("my-form2.html",**templateData2)
 
 #Database writing and queries
 def get_bodies(result_doc):
