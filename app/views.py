@@ -26,7 +26,7 @@ model = models.Word2Vec.load('./static/word2vec_reddit.model')
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
 lda = gensim.models.LdaModel.load('./static/FINAL50.model')
 #index = similarities.MatrixSimilarity.load('./static/reddit.index')
-index = np.load('./static/FINAL50.index')
+index = np.load('./static/FINALH50.npy')
 
 @app.route('/home')
 def home_page():
@@ -73,17 +73,17 @@ def my_form_post2():
     if request.method=='POST':
         text_sim = request.form['text_sim']
         doc = text_sim
-        vec_bow = dictionary.doc2bow(doc.lower().split())
-        vec_lda = lda[vec_bow] # convert the query to LDA space
-        sims = index[vec_lda]
+        #vec_bow = dictionary.doc2bow(doc.lower().split())
+        #vec_lda = lda[vec_bow] # convert the query to LDA space
+        #sims = index[vec_lda]
         #sims = sorted(enumerate(sims), key=lambda item: -item[1])
         #result_doc = sims[0:10]
-        # vec_bow = dictionary.doc2bow(doc.lower().split())
-        # vec_lda = lda[vec_bow]
+        vec_bow = dictionary.doc2bow(doc.lower().split())
+        vec_lda = lda[vec_bow]
         # query index
-        # q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda.num_topics)) # length 50
-        # sims = np.sqrt(0.5 * np.sum((q - index)**2, axis=1))
-        # debug = (q - index)
+        q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda.num_topics))
+        sims = np.sqrt(0.5 * np.sum((q - index)**2, axis=1))
+        
         #HOW MANY RESUlTS FOR SIMS?
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
         result_doc = list(reversed(sims[-10:len(sims)]))
@@ -92,10 +92,10 @@ def my_form_post2():
         for i in range(0,10):
             result_doc[i] = result_doc[i] + (final[i][0][0],)
             result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
+        
         templateData2 = {
         'result2':result_doc,
         'text_sim':text_sim,
-        # 'debug':debug
         }
     return render_template("my-form2.html",**templateData2)
 
@@ -172,9 +172,9 @@ def show_topics():
 
 @app.route('/visuals')
 def show_visuals():
-    # associated = find_associated()
-    # filename = 'static/js/nodes.json'
-    # generate_network_file(associated, filename)
+    associated = find_associated()
+    filename = 'static/js/nodes.json'
+    generate_network_file(associated, filename)
     terms = get_topic_terms(0, lda, dictionary)
     templateData = {'debug':terms[0]}
     return render_template("visuals.html", **templateData)
@@ -263,7 +263,8 @@ def generate_network_file(associations, filename):
                     out += """\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
                     first = False
                 else:
-                    out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
+                    out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0]
+                    # out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
 
         out += """],\n"edges":["""
         first = True
