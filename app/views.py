@@ -83,7 +83,7 @@ def my_form_post2():
         # query index
         q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda.num_topics))
         sims = np.sqrt(0.5 * np.sum((q - index)**2, axis=1))
-        
+
         #HOW MANY RESUlTS FOR SIMS?
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
         result_doc = list(reversed(sims[-10:len(sims)]))
@@ -92,12 +92,25 @@ def my_form_post2():
         for i in range(0,10):
             result_doc[i] = result_doc[i] + (final[i][0][0],)
             result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
-        
+
+        doc_topics = []
+        for i in range(0,10):
+            doc_topics[i] = doc_topic_retriev(final[0][0][0],)
+
         templateData2 = {
         'result2':result_doc,
         'text_sim':text_sim,
+        'doc_topics2':doc_topics,
         }
     return render_template("my-form2.html",**templateData2)
+
+#Get topics of docs in sim docsim
+def doc_topic_retriev(doc):
+    vec_bow = dictionary.doc2bow(doc.lower().split())
+    topics = []
+    topics = lda.get_document_topics(vec_bow)
+    return topics
+
 
 #Database writing and queries
 def get_bodies(result_doc):
@@ -167,8 +180,24 @@ def add_entry():
     return render_template("data_entry.html")
 
 @app.route('/topics')
-def show_topics():
-    return render_template("topics.html")
+def list_topics():
+    topics = lda.show_topics(num_topics=-1, num_words=5, formatted =True)
+    reg = re.compile('.+\\"(\\w+)\\"')
+
+    words = [None] * 50
+    whole = []
+    for (i,j) in topics:
+        temp = [None] * 5
+        words[i] = j.split('+')
+        temp[0] = re.findall(reg, words[i][0])
+        temp[1] = re.findall(reg, words[i][1])
+        temp[2] = re.findall(reg, words[i][2])
+        temp[3] = re.findall(reg, words[i][3])
+        temp[4] = re.findall(reg, words[i][4])
+        whole.append(temp)
+
+    topicsData = {'topicsData': whole}
+    return render_template("topics.html", **topicsData)
 
 @app.route('/visuals')
 def show_visuals():
