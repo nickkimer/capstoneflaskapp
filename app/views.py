@@ -92,15 +92,15 @@ def my_form_post2():
         for i in range(0,10):
             result_doc[i] = result_doc[i] + (final[i][0][0],)
             result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
-
+        '''
         doc_topics = []
         for i in range(0,10):
-            doc_topics[i] = doc_topic_retriev(final[0][0][0],)
+            doc_topics[i] = doc_topic_retriev(final[0][0][0],)'''
 
         templateData2 = {
         'result2':result_doc,
         'text_sim':text_sim,
-        'doc_topics2':doc_topics,
+        #'doc_topics2':doc_topics,
         }
     return render_template("my-form2.html",**templateData2)
 
