@@ -187,13 +187,14 @@ def list_topics():
     words = [None] * 50
     whole = []
     for (i,j) in topics:
-        temp = [None] * 5
+        temp = [None] * 6
         words[i] = j.split('+')
-        temp[0] = re.findall(reg, words[i][0])
-        temp[1] = re.findall(reg, words[i][1])
-        temp[2] = re.findall(reg, words[i][2])
-        temp[3] = re.findall(reg, words[i][3])
-        temp[4] = re.findall(reg, words[i][4])
+        temp[0] = i + 1
+        temp[1] = re.findall(reg, words[i][0])
+        temp[2] = re.findall(reg, words[i][1])
+        temp[3] = re.findall(reg, words[i][2])
+        temp[4] = re.findall(reg, words[i][3])
+        temp[5] = re.findall(reg, words[i][4])
         whole.append(temp)
 
     topicsData = {'topicsData': whole}

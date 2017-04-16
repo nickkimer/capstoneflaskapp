@@ -11,6 +11,7 @@
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
+                <th>Topic Number</th>
                 <th>Element 1</th>
                 <th>Element 2</th>
                 <th>Element 3</th>
@@ -21,11 +22,12 @@
         {% for topic in topicsData %}
       	<tbody>
       			<tr>
-      					<td class="topic-elements-1">{{topic[0]}}</td>
-      					<td class="topic-elements-2">{{topic[1]}}</td>
-      					<td class="topic-elements-3">{{topic[2]}}</td>
-      					<td class="topic-elements-4">{{topic[3]}}</td>
-      					<td class="topic-elements-5">{{topic[4]}}</td>
+                <td class="topic-id">{{topic[0]}}</td>
+      					<td class="topic-elements">{{topic[1]}}</td>
+      					<td class="topic-elements">{{topic[2]}}</td>
+      					<td class="topic-elements">{{topic[3]}}</td>
+      					<td class="topic-elements">{{topic[4]}}</td>
+      					<td class="topic-elements">{{topic[5]}}</td>
       			</tr>
         </tbody>
         {% endfor%}
