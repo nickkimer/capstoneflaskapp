@@ -88,7 +88,7 @@
                 <td><button id='save9' class="edit_category" type="button" name="save">Save</button></td>
             </tr>
             <!-- <tr data-toggle="modal" data-target="#myModal"> -->
-            <tr> 
+            <tr>
                 <td class="doc-id">{{result2[9][0]}}</td>
                 <td class="sim-score">{{result2[9][1]}}</td>
                 <td class="doc-short">{{result2[9][3]}}</td>
@@ -101,7 +101,7 @@
 </div>
 
 <!-- <div id="myModal" class="modal fade" role="dialog"> -->
-<div id="myModal" class="modal fullscreen-modal fade">      
+<div id="myModal" class="modal fullscreen-modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -113,8 +113,30 @@
                 <!-- <p><input type="text" class="input-sm" id="txtdocid"/></p>
                 <p><input type="text" class="input-sm" id="txtfull"/></p> -->
                 <div class="col-sm-6">
-                    <p>Testing Column Right Side</p>
-                    <!-- Insert the Second Column of Topic Data Here -->
+									<div class="table-responsive">
+									    <table class="table table-bordered table-striped">
+                  			<thead>
+													<tr>
+															<th>Topic Number</th>
+															<th>Topic Measure</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+															<td>27</td>
+															<td>0.395712</td>
+													</tr>
+													<tr>
+															<td>32</td>
+															<td>0.24756</td>
+													</tr>
+													<tr>
+															<td>05</td>
+															<td>0.183564</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -123,7 +145,7 @@
         </div>
     </div>
 </div>
-    
+
 <div class="table-responsive" id="selection">
     <h2>Saved Documents will Display Here</h2>
     <table class="table table-bordered table-striped" id="myTable">
@@ -137,11 +159,11 @@
 
         <tbody>
         </tbody>
-    </table>    
+    </table>
     <!-- selected values will display here -->
 </div>
 
-<!-- <script> 
+<!-- <script>
 $('#myModal').on('show.bs.modal', function (event) {
     var getIdFromRow = $(event.relatedTarget).find('td:first-child').text();
     var getFullText = $(event.relatedTarget).find('td:nth-child(4)').text();
@@ -188,7 +210,7 @@ $(function () {
             targetArea = $("#selection");
         targetArea.append(myRow.children().not(myCol).text() + "<br />");
     });
-}); 
+});
 </script>  -->
 
 <script>
@@ -196,9 +218,9 @@ $('document').ready(function() {
     $('.edit_category').click(function() {
         var $tr = $(this).closest('tr'),
             targetArea = $("#selection"); // Don't think I need this line anymore?
-        alert("Document #" + $('.doc-id', $tr).text() + " Saved Successfully"); 
+        alert("Document #" + $('.doc-id', $tr).text() + " Saved Successfully");
         //targetArea.append("Document ID" + $('.doc-id',$tr).text() + " - " + $('.doc-short',$tr).text())
-        $('#myTable > tbody:last-child').append('<tr><td>' + $('.doc-id',$tr).text() + '</td><td>' + $('.sim-score', $tr).text()+ '</td><td>'+ $('.doc-short',$tr).text()+ '</td></tr>');       
+        $('#myTable > tbody:last-child').append('<tr><td>' + $('.doc-id',$tr).text() + '</td><td>' + $('.sim-score', $tr).text()+ '</td><td>'+ $('.doc-short',$tr).text()+ '</td></tr>');
         var pageContent = document.getElementById("selection").innerHTML;
         sessionStorage.setItem("page1content",pageContent);
     });

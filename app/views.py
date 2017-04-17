@@ -18,15 +18,15 @@ import gensim.matutils
 #This is the document similarity setup
 from gensim import corpora, models, similarities
 
-dictionary = corpora.Dictionary.load('./static/FINAL.dict')
-corpus = corpora.MmCorpus('./static/FINAL.mm')
+dictionary = corpora.Dictionary.load('./models/FINAL416.dict')
+corpus = corpora.MmCorpus('./models/FINAL416.mm')
 model = models.Word2Vec.load('./static/word2vec_reddit.model')
 
 
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
-lda = gensim.models.LdaModel.load('./static/FINAL50.model')
+lda = gensim.models.LdaModel.load('./models/FINAL50_416.model')
 #index = similarities.MatrixSimilarity.load('./static/reddit.index')
-index = np.load('./static/FINALH50.npy')
+index = np.load('./models/FINALH50.npy')
 
 @app.route('/home')
 def home_page():
@@ -94,9 +94,9 @@ def my_form_post2():
             result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
         '''
         doc_topics = []
-        for i in range(0,10):
-            doc_topics[i] = doc_topic_retriev(final[0][0][0],)'''
-
+        for (i,j) in result_doc:
+            doc_topics[i] = doc_topic_retriev(result_doc[0][0])
+        '''
         templateData2 = {
         'result2':result_doc,
         'text_sim':text_sim,
@@ -251,7 +251,7 @@ def find_associated():
     templateData = {'debug': associated}
 
     return associated
-
+'''
 def get_document_topics(doc):
     vec_bow = dictionary.doc2bow(doc.split())
     vec_lda = lda[vec_bow] # convert the query to LDA space
@@ -260,7 +260,7 @@ def get_document_topics(doc):
     sims = sorted(enumerate(sims), key=lambda item: -item[1])
     topics = lda.get_document_topics(sims)
     return topics
-
+'''
 
 def build_document_topics():
 
