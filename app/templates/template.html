@@ -5,10 +5,8 @@
 
     <title>RAMP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link href="static/bootstrap.min.css" rel="stylesheet" media="screen"> -->
     <!-- jQuery -->
     <script src="./static/js/jquery.js"></script>
-
     <!-- Bootstrap Core JavaScript -->
     <script src="./static/js/bootstrap.min.js"></script>
     <!-- Bootstrap Core CSS -->
@@ -60,26 +58,26 @@
                     <a href="/home">Project Dashboard</a>
                 </li>
                 <li>
+                    <a href="/docsim">Research</a>
+                </li>
+                <li>
+                    <a href="/add">Respond to Request</a>
+                </li>
+<!--                 <li>
                     <a href="/savedoc">Saved Documents</a>
-                </li>
-                <li>
-                    <a href="/docsim">Document Similarity</a>
-                </li>
-                <li>
+                </li> -->
+<!--            <li>
                     <a href="/word2vec">Word Embedding</a>
-                </li>
+                </li> -->
                 <li>
                     <a href="/topics">Topics</a>
                 </li>
                 <li>
-                    <a href="/visuals">Visualizations</a>
+                    <a href="/visuals">Knowledge Graph</a>
                 </li>
-                <li>
-                    <a href="/add">Data Entry</a>
-                </li>
+
             </ul>
         </div>
-        <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
@@ -91,16 +89,8 @@
             <div class="container-fluid">
                 {% block content %} {% endblock %}
             </div>
-
         </div>
-        <!-- /#page-content-wrapper -->
-
     </div>
-    <!-- /#wrapper -->
-
-
-
-    <!-- Menu Toggle Script -->
     <script>
     $("#menu-toggle").click(function(e) {
         e.preventDefault();

@@ -161,9 +161,11 @@ def view_document(id):
 @app.route('/add', methods=['GET','POST'])
 def add_entry():
 
-    new = [None]*7
+    debug = ""
 
     if request.method=='POST':
+        debug = str(request.form['Question_ID']) + str(request.form['Question']) + str(request.form['Date']) + str(request.form['Analyst_Name']) + str(request.form['Response'])
+        new = [None] * 7
         new[0] = 'New'
         new[1] = request.form['Question_ID']
         new[2] = request.form['Date']
@@ -172,12 +174,13 @@ def add_entry():
         new[5] = request.form['Response']
         new[6] = 'NA'
 
-    with sql.connect('static/mitre_2_full.db') as conn:
-        cur = conn.cursor()
-        cur.execute('INSERT INTO documents_copy VALUES(?,?,?,?,?,?,?)',(new[0],new[1],new[2],new[3],new[4],new[5],new[6]))
-        conn.commit()
+        with sql.connect('static/mitre_2_full.db') as conn:
+            cur = conn.cursor()
+            cur.execute('INSERT INTO documents_copy VALUES(?,?,?,?,?,?,?)',(new[0],new[1],new[2],new[3],new[4],new[5],new[6]))
+            conn.commit()
 
-    return render_template("data_entry.html")
+    templateData={"debug":debug}
+    return render_template("data_entry.html", **templateData)
 
 @app.route('/topics')
 def list_topics():
@@ -202,12 +205,14 @@ def list_topics():
 
 @app.route('/visuals')
 def show_visuals():
-    associated = find_associated()
-    filename = 'static/js/nodes.json'
-    generate_network_file(associated, filename)
-    terms = get_topic_terms(0, lda, dictionary)
-    templateData = {'debug':terms[0]}
-    return render_template("visuals.html", **templateData)
+
+    # associated = find_associated()
+    # filename = 'static/js/nodes.json'
+    # generate_network_file(associated, filename)
+    # terms = get_topic_terms(0, lda, dictionary)
+    # debug = terms
+    # templateData = {'debug':debug}
+    return render_template("visuals.html")
 
 def find_associated():
     doc_topic = build_document_topics()
@@ -255,9 +260,16 @@ def find_associated():
 def get_document_topics(doc):
     vec_bow = dictionary.doc2bow(doc.split())
     vec_lda = lda[vec_bow] # convert the query to LDA space
-    sims = index[vec_lda]
-    doc_topics = []
+    q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda.num_topics))
+    sims = np.sqrt(0.5 * np.sum((q - index)**2, axis=1))
+        
+    #HOW MANY RESUlTS FOR SIMS?
     sims = sorted(enumerate(sims), key=lambda item: -item[1])
+    result_doc = list(reversed(sims[-10:len(sims)]))
+
+    # sims = index[vec_lda]
+    # doc_topics = []
+    # sims = sorted(enumerate(sims), key=lambda item: -item[1])
     topics = lda.get_document_topics(sims)
     return topics
 '''
