@@ -108,10 +108,14 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Document Full Text Viewer</h4>
             </div>
-            <div class="modal-body" id="orderDetails">
-                <div id="writetome"></div>
+            <div class="modal-body row" id="orderDetails">
+                <div class="col-sm-6" id="writetome"></div>
                 <!-- <p><input type="text" class="input-sm" id="txtdocid"/></p>
                 <p><input type="text" class="input-sm" id="txtfull"/></p> -->
+                <div class="col-sm-6">
+                    <p>Testing Column Right Side</p>
+                    <!-- Insert the Second Column of Topic Data Here -->
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -146,7 +150,8 @@ $('#myModal').on('show.bs.modal', function (event) {
 });
 </script> -->
 
-<script>
+<!-- REVERT BACK TO THIS IF TESTING NO LONGER WORKS -->
+<!-- <script>
 $('.doc-short').on('click',function(){
     $("#myModal").modal("show");
     //$("#txtdocid").val($(this).closest('tr').children()[0].textContent);
@@ -156,6 +161,20 @@ $('.doc-short').on('click',function(){
     //$('#orderDetails').html('<p>See if this works</p>');
     $('#orderDetails').html("");
     $('#orderDetails').append('<b>Document Number: </b>' + $('.doc-id',$this).text() +'<br><br> <b> Full Text:</b><br>' + $('.fulltexthidden',$this).text() );
+});
+</script>
+-->
+
+<script>
+$('.doc-short').on('click',function(){
+    $("#myModal").modal("show");
+    //$("#txtdocid").val($(this).closest('tr').children()[0].textContent);
+    //$("#txtfull").val($(this).closest('tr').children()[3].textContent);
+    var $this = $(this).closest("tr"),
+        targetArea = $("#writetome");
+    //$('#orderDetails').html('<p>See if this works</p>');
+    $('#writetome').html("");
+    $('#writetome').append('<b>Document Number: </b>' + $('.doc-id',$this).text() +'<br><br> <b> Full Text:</b><br>' + $('.fulltexthidden',$this).text() );
 });
 </script>
 
