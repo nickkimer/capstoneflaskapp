@@ -12,9 +12,9 @@
         border: 1px solid lightgray;
     }
 </style>
-
+<!-- 
 <p>Debug</p>
-<p>{{debug}}</p>
+<p>{{debug}}</p> -->
 
 <div id="mynetwork"></div>
 <script type="text/javascript" src="{{url_for('static', filename='js/nodes.json')}}"></script>
@@ -50,7 +50,6 @@
             edges: edges
         };
         var options = {
-            layout: {hierarchical: {enabled: false}},
             nodes: {shape: 'text', fixed: false},
             edges: {color: {color: 'rgba(0,0,0,.3)', highlight: 'rgba(0,0,255,.7)'}}
 

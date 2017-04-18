@@ -205,47 +205,77 @@ def list_topics():
 
 @app.route('/visuals')
 def show_visuals():
-
     # associated = find_associated()
-    # filename = 'static/js/nodes.json'
+    filename = 'static/js/nodes.json'
     # generate_network_file(associated, filename)
     # terms = get_topic_terms(0, lda, dictionary)
-    # debug = terms
-    # templateData = {'debug':debug}
-    return render_template("visuals.html")
 
-def find_associated():
-    doc_topic = build_document_topics()
-    rows = doc_topic.shape[0]
-    cols = doc_topic.shape[1]
 
-    threshold = .01
-    for i in range(0,rows):
-        for j in range(0, cols):
-            if doc_topic[i,j] > threshold:
-                doc_topic[i,j] = 1
-            else:
-                doc_topic[i,j] = 0
+    # with sql.connect('static/mitre_2_full.db') as conn:
+    #     cur = conn.cursor()
+    #     result = cur.execute('SELECT * FROM doc_topic')
+    # debug = gensim.matutils.sparse2full(result.fetchall(),lda.num_topics)
 
+    dense_doc_topic = create_dense_doc_topic()
+    associations = find_associated(dense_doc_topic)
+    filename = 'static/js/nodes.json'
+    generate_network_file(associations, filename)
+    templateData = {'debug':associations}
+    return render_template("visuals.html", **templateData)
+
+def build_doc_topics():
+     with sql.connect('static/mitre_2_full.db') as conn:
+        cur = conn.cursor()
+        for each_doc in enumerate(corpus):
+            doc_id = each_doc[0]
+            topics = lda[each_doc[1]]
+            for each_topic in topics:
+                topic_id = each_topic[0]
+                percent = each_topic[1]
+                cur.execute('INSERT INTO doc_topic VALUES(?,?,?)',(doc_id, topic_id, percent))
+
+def get_top_docs(topic_id):
+    with sql.connect('static/mitre_2_full.db') as conn:
+        cur = conn.cursor()
+        result = conn.execute('''SELECT doc_id FROM doc_topic WHERE topic_id == (?) ORDER BY percent DESC LIMIT 5''', (str(topic_id),))  
+
+    return result.fetchall()
+
+def create_dense_doc_topic():
+    with sql.connect('static/mitre_2_full.db') as conn:
+        cur = conn.cursor()
+        result = cur.execute('SELECT * FROM doc_topic')
+        threshold = .2
+        dense_doc_topic = np.zeros([corpus.num_docs, lda.num_topics])
+        for each in result.fetchall():
+            doc_id = each[0]
+            topic_id = each[1]
+            percent = each[2]
+            if percent > threshold:
+                dense_doc_topic[doc_id,topic_id] = 1
+
+        return dense_doc_topic
+
+def find_associated(doc_topic):
     # calculate marginal probabilities
-    marginal_prob = doc_topic.sum(axis=0)/rows
+    marginal_prob = doc_topic.sum(axis=0)/corpus.num_docs
 
-    topic_topic = np.zeros([cols,cols])
+    topic_topic = np.zeros([lda.num_topics,lda.num_topics])
     # calculate joint probabilities
-    for i in range(0,rows):
-        for j in range(0,cols):
-            for k in range(0,cols):
+    for i in range(0,corpus.num_docs):
+        for j in range(0,lda.num_topics):
+            for k in range(0,lda.num_topics):
                 if doc_topic[i,j] == 1 and doc_topic[i,k] ==1:
                     # if j != k:
                     topic_topic[j,k] = topic_topic[j,k] + 1
 
-    topic_topic = topic_topic / rows
+    topic_topic = topic_topic / corpus.num_docs
 
     # find associated topics
-    associated = [[]] * cols
-    threshold = 5
-    for i in range(0, cols):
-        for j in range(0, cols):
+    associated = [[]] * lda.num_topics
+    threshold = 1
+    for i in range(0, lda.num_topics):
+        for j in range(0, lda.num_topics):
             topic_topic[i,j] = topic_topic[i,j] / (marginal_prob[i] * marginal_prob[j])
             if topic_topic[i,j] > threshold:
                 if associated[i] == []:
@@ -253,45 +283,10 @@ def find_associated():
                 else:
                     associated[i].append(j)
 
-    templateData = {'debug': associated}
-
     return associated
-'''
-def get_document_topics(doc):
-    vec_bow = dictionary.doc2bow(doc.split())
-    vec_lda = lda[vec_bow] # convert the query to LDA space
-    q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda.num_topics))
-    sims = np.sqrt(0.5 * np.sum((q - index)**2, axis=1))
-        
-    #HOW MANY RESUlTS FOR SIMS?
-    sims = sorted(enumerate(sims), key=lambda item: -item[1])
-    result_doc = list(reversed(sims[-10:len(sims)]))
-
-    # sims = index[vec_lda]
-    # doc_topics = []
-    # sims = sorted(enumerate(sims), key=lambda item: -item[1])
-    topics = lda.get_document_topics(sims)
-    return topics
-'''
-
-def build_document_topics():
-
-    with sql.connect('static/mitre_2_full.db') as conn:
-        cur = conn.cursor()
-        result = conn.execute('''SELECT body FROM posts ''')
-        result = result.fetchall()
-
-    num_docs = len(result)
-    doc_topic_matrix = np.zeros([num_docs,100])
-
-    for i in range(0,num_docs-1):
-        topics = get_document_topics(result[i][0])
-        for each in topics:
-            doc_topic_matrix[i][each[0]] = each[1]
-
-    return doc_topic_matrix
 
 def generate_network_file(associations, filename):
+
     with open(os.path.join(app.root_path, filename), 'w') as f:
         out = """{\n"nodes":[\n"""
 
@@ -305,15 +300,14 @@ def generate_network_file(associations, filename):
                     out += """\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
                     first = False
                 else:
-                    out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0]
-                    # out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
+                    out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
 
         out += """],\n"edges":["""
         first = True
         edge_id = 0
         for node_id in range(0,num_topics):
             for association in associations[node_id]:
-                if node_id != association:
+                if node_id != association and node_id < association:
                     if first:
                         out += """\n\t{\"from\":""" + str(node_id) + """,\"to\":""" + str(association) + "}"
                         first = False
