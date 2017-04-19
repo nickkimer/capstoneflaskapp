@@ -20,7 +20,7 @@ from gensim import corpora, models, similarities
 
 dictionary = corpora.Dictionary.load('./models/FINAL416.dict')
 corpus = corpora.MmCorpus('./models/FINAL416.mm')
-model = models.Word2Vec.load('./static/word2vec_reddit.model')
+model = models.Word2Vec.load('./models/word2vec.model')
 
 
 #lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
@@ -237,7 +237,7 @@ def build_doc_topics():
 def get_top_docs(topic_id):
     with sql.connect('static/mitre_2_full.db') as conn:
         cur = conn.cursor()
-        result = conn.execute('''SELECT doc_id FROM doc_topic WHERE topic_id == (?) ORDER BY percent DESC LIMIT 5''', (str(topic_id),))  
+        result = conn.execute('''SELECT doc_id FROM doc_topic WHERE topic_id == (?) ORDER BY percent DESC LIMIT 5''', (str(topic_id),))
 
     return result.fetchall()
 
