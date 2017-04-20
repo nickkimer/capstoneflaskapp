@@ -49,23 +49,32 @@ def get_bodies(result_doc):
         #bodies[i] = bodies[i][0][0][0:100] + "..." - moved to above inside of the function
     return bodies
 
-# Doc to Doc Similarity Routes
-text_sim = 'navy marine ww-ii armed forces'
-doc = text_sim
-vec_bow = dictionary.doc2bow(doc.lower().split())
-vec_lda = lda[vec_bow]
-# query index
-q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda.num_topics))
-sims = np.sqrt(0.5 * np.sum((q - index)**2, axis=1))
-#HOW MANY RESUlTS FOR SIMS?
-sims = sorted(enumerate(sims), key=lambda item: -item[1])
-result_doc = list(reversed(sims[-10:len(sims)]))
+def my_form_post2():
+    text_sim = 'marine navy ww-ii germany france japan'
+    doc = text_sim
+    vec_bow = dictionary.doc2bow(doc.lower().split())
+    vec_lda = lda[vec_bow]
+    # query index
+    q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda.num_topics))
+    sims = np.sqrt(0.5 * np.sum((q - index)**2, axis=1))
+    #HOW MANY RESUlTS FOR SIMS?
+    sims = sorted(enumerate(sims), key=lambda item: -item[1])
+    result_doc = list(reversed(sims[-10:len(sims)]))
 
-doc_topics = get_top_docs(result_doc)
+    doc_topics = get_top_docs(result_doc)
 
-final = get_bodies(result_doc)
-for i in range(0, 10):
-    result_doc[i] = result_doc[i] + (final[i][0][0],)
-    result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
+    final = get_bodies(result_doc)
+    for i in range(0, 10):
+        result_doc[i] = result_doc[i] + (final[i][0][0],)
+        result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
 
-print(doc_topics)
+    templateData2 = {
+        'result2':result_doc,
+        'text_sim':text_sim,
+        'x':doc_topics
+    }
+    return doc_topics
+
+test = my_form_post2()
+
+print(test)
