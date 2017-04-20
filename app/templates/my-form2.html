@@ -198,25 +198,15 @@ $('.doc-short').on('click',function(){
         targetArea = $("#writetable");
     $("#topic_table tbody tr").remove();
     $('#topic_table > tbody:last-child').append('<tr><td>' + $('.topic-id_0',$that).text() + '</td><td>' + $('.topic-measure_0', $that).text()+'</td></tr>' +
-                                        '<tr><td>' + $('.topic-id_1',$that).text() + '</td><td>' + $('.topic-measure_1', $that).text()+'</td></tr>' +
-                                        '<tr><td>' + $('.topic-id_2',$that).text() + '</td><td>' + $('.topic-measure_2', $that).text()+'</td></tr>' +
-                                        '<tr><td>' + $('.topic-id_3',$that).text() + '</td><td>' + $('.topic-measure_3', $that).text()+'</td></tr>' +
-                                        '<tr><td>' + $('.topic-id_4',$that).text() + '</td><td>' + $('.topic-measure_4', $that).text()+'</td></tr>');
+                                        '</td><td>' + $('.topic-id_1',$that).text() + '</td><td>' + $('.topic-measure_1', $that).text()+'</td></tr>' +
+                                        '</td><td>' + $('.topic-id_2',$that).text() + '</td><td>' + $('.topic-measure_2', $that).text()+'</td></tr>' +
+                                        '</td><td>' + $('.topic-id_3',$that).text() + '</td><td>' + $('.topic-measure_3', $that).text()+'</td></tr>' +
+                                        '</td><td>' + $('.topic-id_4',$that).text() + '</td><td>' + $('.topic-measure_4', $that).text()+'</td></tr>');
 
 });
 </script>
 
-<script>
-$('.doc-short').on('click',function(){
-    $("#myModal").modal("show");
-    //$("#txtdocid").val($(this).closest('tr').children()[0].textContent);
-    //$("#txtfull").val($(this).closest('tr').children()[3].textContent);
-    var $that = $(this).closest("tr"),
-        targetArea = $("#writetable");
-    $("#topic_table tbody tr").remove();
-    $('#topic_table > tbody:last-child').append('<tr><td>' + $('.topic-id',$that).text() + '</td><td>' + $('.topic-measure', $that).text()+'</td></tr>');
-});
-</script>
+
 
 <!-- <script>
 $(function () {
