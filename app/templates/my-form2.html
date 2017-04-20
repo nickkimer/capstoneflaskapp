@@ -30,6 +30,16 @@
                 <td class="doc-short">{{result2[0][3]}}</td> <!-- Index 3 has first 100 characters, [2] has the full text -->
                 <td class="fulltexthidden" style="display:none;"> {{result2[0][2]}}</td>
                 <td><button id='save1' class="edit_category" type="button" name="save">Save</button></td>
+                <td class="topic-id_0" style='display:none;'>{{doc_topics2[0][0][0]}}</td>
+                <td class="topic-measure_0" style='display:none;'>{{doc_topics2[0][0][1]}}</td>
+                <td class="topic-id_1" style='display:none;'>{{doc_topics2[0][1][0]}}</td>
+                <td class="topic-measure_1" style='display:none;'>{{doc_topics2[0][1][1]}}</td>
+                <td class="topic-id_2" style='display:none;'>{{doc_topics2[0][2][0]}}</td>
+                <td class="topic-measure_2" style='display:none;'>{{doc_topics2[0][2][1]}}</td>
+                <td class="topic-id_3" style='display:none;'>{{doc_topics2[0][3][0]}}</td>
+                <td class="topic-measure_3" style='display:none;'>{{doc_topics2[0][3][1]}}</td>
+                <td class="topic-id_4" style='display:none;'>{{doc_topics2[0][4][0]}}</td>
+                <td class="topic-measure_4" style='display:none;'>{{doc_topics2[0][4][1]}}</td>
             </tr>
             <tr>
                 <td class="doc-id">{{result2[1][0]}}</td>
@@ -112,31 +122,18 @@
                 <div class="col-sm-6" id="writetome"></div>
                 <!-- <p><input type="text" class="input-sm" id="txtdocid"/></p>
                 <p><input type="text" class="input-sm" id="txtfull"/></p> -->
-                <div class="col-sm-6">
-									<div class="table-responsive">
-									    <table class="table table-bordered table-striped">
-                  			<thead>
-													<tr>
-															<th>Topic Number</th>
-															<th>Topic Measure</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-															<td>27</td>
-															<td>0.395712</td>
-													</tr>
-													<tr>
-															<td>32</td>
-															<td>0.24756</td>
-													</tr>
-													<tr>
-															<td>05</td>
-															<td>0.183564</td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
+                <div class="col-sm-6" >
+                    <div class='table-responsive' id='writetable'>
+                        <table class='table table-bordered table=striped' id='topic_table'>
+                            <thead>
+                                <tr>
+                                    <th>Topic Number</th>
+                                    <th>Topic Measure</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -197,9 +194,29 @@ $('.doc-short').on('click',function(){
     //$('#orderDetails').html('<p>See if this works</p>');
     $('#writetome').html("");
     $('#writetome').append('<b>Document Number: </b>' + $('.doc-id',$this).text() +'<br><br> <b> Full Text:</b><br>' + $('.fulltexthidden',$this).text() );
+    var $that = $(this).closest("tr"),
+        targetArea = $("#writetable");
+    $("#topic_table tbody tr").remove();
+    $('#topic_table > tbody:last-child').append('<tr><td>' + $('.topic-id_0',$that).text() + '</td><td>' + $('.topic-measure_0', $that).text()+'</td></tr>' +
+                                        '<tr><td>' + $('.topic-id_1',$that).text() + '</td><td>' + $('.topic-measure_1', $that).text()+'</td></tr>' +
+                                        '<tr><td>' + $('.topic-id_2',$that).text() + '</td><td>' + $('.topic-measure_2', $that).text()+'</td></tr>' +
+                                        '<tr><td>' + $('.topic-id_3',$that).text() + '</td><td>' + $('.topic-measure_3', $that).text()+'</td></tr>' +
+                                        '<tr><td>' + $('.topic-id_4',$that).text() + '</td><td>' + $('.topic-measure_4', $that).text()+'</td></tr>');
+
 });
 </script>
 
+<script>
+$('.doc-short').on('click',function(){
+    $("#myModal").modal("show");
+    //$("#txtdocid").val($(this).closest('tr').children()[0].textContent);
+    //$("#txtfull").val($(this).closest('tr').children()[3].textContent);
+    var $that = $(this).closest("tr"),
+        targetArea = $("#writetable");
+    $("#topic_table tbody tr").remove();
+    $('#topic_table > tbody:last-child').append('<tr><td>' + $('.topic-id',$that).text() + '</td><td>' + $('.topic-measure', $that).text()+'</td></tr>');
+});
+</script>
 
 <!-- <script>
 $(function () {
@@ -217,7 +234,7 @@ $(function () {
 $('document').ready(function() {
     $('.edit_category').click(function() {
         var $tr = $(this).closest('tr'),
-            targetArea = $("#selection"); // Don't think I need this line anymore?
+            targetArea = $("#selection");
         alert("Document #" + $('.doc-id', $tr).text() + " Saved Successfully");
         //targetArea.append("Document ID" + $('.doc-id',$tr).text() + " - " + $('.doc-short',$tr).text())
         $('#myTable > tbody:last-child').append('<tr><td>' + $('.doc-id',$tr).text() + '</td><td>' + $('.sim-score', $tr).text()+ '</td><td>'+ $('.doc-short',$tr).text()+ '</td></tr>');

@@ -79,11 +79,17 @@ def my_form_post2():
         doc_topics = []
         for i in range(10):
             doc_topics.append(get_top_docs(result_doc[i][0]))
+            if len(doc_topics[i]) < 5:
+                short = 5 - len(doc_topics[i])
+                empty_tup = (np.nan, np.nan)
+                for element in range(short):
+                    doc_topics[i].append(empty_tup)
+
 
         templateData2 = {
             'result2':result_doc,
             'text_sim':text_sim,
-            'doc_topics2':doc_topics,
+            'doc_topics2':doc_topics
         }
     return render_template("my-form2.html", **templateData2)
 
