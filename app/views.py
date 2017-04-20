@@ -75,24 +75,25 @@ def my_form_post2():
         for i in range(0, 10):
             result_doc[i] = result_doc[i] + (final[i][0][0],)
             result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
-        '''
+
         doc_topics = []
-        for (i,j) in result_doc:
-            doc_topics[i] = doc_topic_retriev(result_doc[0][0])
-        '''
+        for i in range(10):
+            doc_topics.append(get_top_docs(result_doc[i][0]))
+
         templateData2 = {
             'result2':result_doc,
             'text_sim':text_sim,
-            #'doc_topics2':doc_topics,
+            'doc_topics2':doc_topics,
         }
     return render_template("my-form2.html", **templateData2)
 
 #Get topics of docs in sim docsim
-def doc_topic_retriev(doc):
-    vec_bow = dictionary.doc2bow(doc.lower().split())
-    topics = []
-    topics = lda.get_document_topics(vec_bow)
-    return topics
+def get_top_docs(doc_id):
+    with sql.connect('static/mitre_2_full.db') as conn:
+        cur = conn.cursor()
+        result = conn.execute('''SELECT topic_id, percent FROM doc_topic WHERE doc_id == (?) ORDER BY
+                                percent DESC LIMIT 5''', (str(doc_id),))
+    return result.fetchall()
 
 
 #Database writing and queries
