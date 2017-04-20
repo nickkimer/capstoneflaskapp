@@ -53,6 +53,27 @@ def my_form_post():
 def addRegion():
     return render_template("save-doc.html")
 
+#Get topics of docs in sim docsim
+def get_top_docs(result_doc):
+    with sql.connect('static/mitre_2_full.db') as conn:
+        cur = conn.cursor()
+        doc_topics_temp = []
+
+        for i in range(0, 10):
+            doc_id = result_doc[i][0]
+            result = conn.execute('''SELECT topic_id, percent FROM doc_topic WHERE doc_id == (?) ORDER BY
+                                    percent DESC LIMIT 5''', (int(doc_id),))
+            temp = result.fetchall()
+            doc_topics_temp.append(temp)
+            if len(doc_topics_temp[i]) < 5:
+                short = 5 - len(doc_topics_temp[i])
+                empty_tup = (0, 0)
+                for element in range(short):
+                    doc_topics_temp[i].append(empty_tup)
+
+    return doc_topics_temp
+
+
 # Doc to Doc Similarity Routes
 @app.route('/docsim')
 def my_form2():
@@ -71,36 +92,19 @@ def my_form_post2():
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
         result_doc = list(reversed(sims[-10:len(sims)]))
 
+        doc_topics = get_top_docs(result_doc)
+
         final = get_bodies(result_doc)
         for i in range(0, 10):
             result_doc[i] = result_doc[i] + (final[i][0][0],)
             result_doc[i] = result_doc[i] + (final[i][0][0][0:100] + "...",)
 
-        doc_topics = []
-        for i in range(10):
-            doc_topics.append(get_top_docs(result_doc[i][0]))
-            if len(doc_topics[i]) < 5:
-                short = 5 - len(doc_topics[i])
-                empty_tup = (0, 0)
-                for element in range(short):
-                    doc_topics[i].append(empty_tup)
-
-
         templateData2 = {
             'result2':result_doc,
             'text_sim':text_sim,
-            'doc_topics2':doc_topics
+            'x':doc_topics
         }
     return render_template("my-form2.html", **templateData2)
-
-#Get topics of docs in sim docsim
-def get_top_docs(doc_id):
-    with sql.connect('static/mitre_2_full.db') as conn:
-        cur = conn.cursor()
-        result = conn.execute('''SELECT topic_id, percent FROM doc_topic WHERE doc_id == (?) ORDER BY
-                                percent DESC LIMIT 5''', (str(doc_id),))
-    return result.fetchall()
-
 
 #Database writing and queries
 def get_bodies(result_doc):
