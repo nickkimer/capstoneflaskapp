@@ -10,6 +10,7 @@ Created on Wed Feb 15 20:29:26 2017
 import pandas as pd
 from gensim import corpora
 from nltk.corpus import stopwords
+import re
 
 data = pd.read_csv("C:/Users/Nick/Downloads/reddit_doc_2017-02-16.dump.csv")
 documents = data.doc_str.tolist()
@@ -23,8 +24,11 @@ documents = data.body.tolist()
 # remove common words and tokenize
 #stoplist = set('for a of the and to in '.split())
 stoplist = set(stopwords.words('english'))
-stoplist.update(['reddit','www','com','askhistorians','subreddit','imgur','for','a','of','the','and','to','in','would','*','http','org','en','comment','comments','could','would','also','really','-','/','u','r',',','?'])
+stoplist.update(['reddit','www','com','askhistorians','subreddit','imgur','for','a','of','the','and','to','in','would','*','http','org','en','comment','comments','could','would','also','really','-','/','u','r',',','?','--','!','|','<','>','=','+','[',']','{','}'])
 
+for document in documents:
+	for word in document.lower().split():
+		word = re.sub(r'[^\w\s]','',word)
 
 texts = [[word for word in document.lower().split() if word not in stoplist]
          for document in documents]
