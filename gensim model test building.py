@@ -23,7 +23,7 @@ documents = data.body.tolist()
 # remove common words and tokenize
 #stoplist = set('for a of the and to in '.split())
 stoplist = set(stopwords.words('english'))
-stoplist.update(['reddit','www','com','askhistorians','subreddit','imgur','for','a','of','the','and','to','in','would','*','http','org','en','comment','comments','could','would','also','really'])
+stoplist.update(['reddit','www','com','askhistorians','subreddit','imgur','for','a','of','the','and','to','in','would','*','http','org','en','comment','comments','could','would','also','really','-','/','u','r',',','?'])
 
 
 texts = [[word for word in document.lower().split() if word not in stoplist]

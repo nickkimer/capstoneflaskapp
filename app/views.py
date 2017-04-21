@@ -9,10 +9,10 @@ import gensim.matutils
 from gensim import corpora, models, similarities
 
 # Load in Models
-dictionary = corpora.Dictionary.load('./models/FINAL416.dict')
-corpus = corpora.MmCorpus('./models/FINAL416.mm')
+dictionary = corpora.Dictionary.load('./models/FINAL.dict')
+corpus = corpora.MmCorpus('./models/FINAL.mm')
 model = models.Word2Vec.load('./models/word2vec.model')
-lda = gensim.models.LdaModel.load('./models/FINAL50_416.model')
+lda = gensim.models.LdaModel.load('./models/FINAL50.model')
 index = np.load('./models/FINALH50.npy')
 
 # Project Dashboard Route
