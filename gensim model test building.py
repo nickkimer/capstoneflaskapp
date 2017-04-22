@@ -12,23 +12,58 @@ from gensim import corpora
 from nltk.corpus import stopwords
 import re
 
-data = pd.read_csv("C:/Users/Nick/Downloads/reddit_doc_2017-02-16.dump.csv")
+data = pd.read_csv("C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/static/reddit_doc_2017-02-16.dump.csv")
 documents = data.doc_str.tolist()
 
-data = pd.read_csv("C:/Users/Nick/Desktop/training_corpus_final.csv",encoding = 'iso-8859-1')
+data = pd.read_csv("C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/static/training_corpus_final.csv",encoding = 'iso-8859-1')
 
 #documents = data.doc_str.tolist()
 data['body'] = data['body'].astype(str)
 documents = data.body.tolist()
 
-for document in documents:
-	for word in document.lower().split():
+for (index,document) in enumerate(documents):
+	# print(document)
+
+	for word in document.split():
+		# print(word)
+		old_word = word
 		word = re.sub(r'[^\w\s]','',word)
-  
+		word = word.lower()
+		# print(word)
+		document = document.replace(old_word, word)
+	# try:
+	# 	print(document)
+	# except:
+	# 	print('cannot print document')
+	documents[index] = document
+# try:
+# 	print(documents)
+# except:
+# 	print('cannot print document')
+
 # remove common words and tokenize
 #stoplist = set('for a of the and to in '.split())
 stoplist = set(stopwords.words('english'))
-stoplist.update(['reddit','www','com','askhistorians','subreddit','imgur','for','a','of','the','and','to','in','would','*','http','org','en','comment','comments','could','would','also','really','-','/','u','r',',','?','--','!','|','<','>','=','+','[',']','{','}','d','s','m','its','dont','wont','cant','im'])
+extra_stopwords = []
+
+# conjunctions and prepositions
+extra_stopwords.extend(['in','to','the','of','for', 'and', 'nor', 'but', 'or', 'yet', 'so'])
+
+# symbols
+extra_stopwords.extend(['-','/','u','r',',','?','--','!','|','<','>','=','+','[',']','{','}','*'])
+
+# reddit words
+extra_stopwords.extend(['http','org','en','comment','comments','reddit','www','com','askhistorians','subreddit','imgur'])
+
+# letters
+extra_stopwords.extend(['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'])
+
+# question words
+extra_stopwords.extend(['could','would','also','really', 'thanks', 'thank','its','dont','wont','cant','im','ive','know','curious','much','many','anybody','anyone'])
+extra_stopwords.extend(['know','any','interesting','question','questions','answer','answers','like','shall','please','wow'])
+
+
+stoplist.update(extra_stopwords)
 
 #for document in documents:
 #	for word in document.lower().split():
@@ -48,15 +83,15 @@ from pprint import pprint  # pretty-printer
 #pprint(texts)
 
 dictionary = corpora.Dictionary(texts)
-dictionary.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL.dict')  # store the dictionary, for future reference
+dictionary.save('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL.dict')  # store the dictionary, for future reference
 print(dictionary)
 
 corpus = [dictionary.doc2bow(text) for text in texts]
-corpora.MmCorpus.serialize('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL.mm', corpus)  
+corpora.MmCorpus.serialize('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL.mm', corpus)  
 
 from gensim import corpora, models, similarities
-dictionary = corpora.Dictionary.load('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL.dict')
-corpus = corpora.MmCorpus('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL.mm') # comes from the first tutorial, "From strings to vectors"
+dictionary = corpora.Dictionary.load('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL.dict')
+corpus = corpora.MmCorpus('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL.mm') # comes from the first tutorial, "From strings to vectors"
 #print(corpus)
 
 lda100 = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
@@ -66,21 +101,21 @@ lda40 = models.LdaModel(corpus, id2word=dictionary, num_topics=40)
 lda40.save('FINAL40.model')
 
 lda50 = models.LdaModel(corpus, id2word=dictionary, num_topics=50)
-lda50.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL50.model')
+lda50.save('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL50.model')
 
 
 
 index100 = similarities.MatrixSimilarity(lda100[corpus]) # transform corpus to LDA space and index it
-index100.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL100.index')
-index100 = similarities.MatrixSimilarity.load('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL100.index')
+index100.save('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL100.index')
+index100 = similarities.MatrixSimilarity.load('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL100.index')
 
 index40 = similarities.MatrixSimilarity(lda40[corpus]) # transform corpus to LDA space and index it
-index40.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL40.index')
-index40 = similarities.MatrixSimilarity.load('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL40.index')
+index40.save('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL40.index')
+index40 = similarities.MatrixSimilarity.load('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL40.index')
 
 index50 = similarities.MatrixSimilarity(lda50[corpus]) # transform corpus to LDA space and index it
-index50.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL50.index')
-index50 = similarities.MatrixSimilarity.load('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINAL50.index')
+index50.save('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL50.index')
+index50 = similarities.MatrixSimilarity.load('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/FINAL50.index')
 
 
 #Here's the query
@@ -97,6 +132,7 @@ sims = index50[vec_lda]
 
 sims = sorted(enumerate(sims), key=lambda item: -item[1])
 print(sims[1:10])
+print(data)
 print(data.doc_str[3956])
 
 
@@ -120,8 +156,8 @@ vec_lda = lda50[vec_bow] # convert the query to LDA space
 # query index
 q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda50.num_topics))
 indexH50 = np.sqrt(gensim.matutils.corpus2dense(lda50[corpus], lda50.num_topics).T)
-#np.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINALH50.npy',indexH50)
-#indexH50 = np.load('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/FINALH50.npy')
+#np.save('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/static/FINALH50.npy',indexH50)
+#indexH50 = np.load('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/static/FINALH50.npy')
 # calculate similarity score from script implementation
 sims = np.sqrt(0.5 * np.sum((q - indexH50)**2, axis=1))
 
@@ -175,15 +211,15 @@ from pprint import pprint  # pretty-printer
 #pprint(texts)
 type(texts)
 dictionary = corpora.Dictionary(texts)
-dictionary.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstone.dict')  # store the dictionary, for future reference
+dictionary.save('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/capstone.dict')  # store the dictionary, for future reference
 print(dictionary)
 
 corpus = [dictionary.doc2bow(text) for text in texts]
 corpora.MmCorpus.serialize('capstone.mm', corpus)  
 
 from gensim import corpora, models, similarities
-dictionary = corpora.Dictionary.load('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstone.dict')
-corpus = corpora.MmCorpus('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstone.mm') # comes from the first tutorial, "From strings to vectors"
+dictionary = corpora.Dictionary.load('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/capstone.dict')
+corpus = corpora.MmCorpus('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/capstone.mm') # comes from the first tutorial, "From strings to vectors"
 #print(corpus)
 
 lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
@@ -192,7 +228,7 @@ lda.save('lda_reddit.model')
 
 #index = similarities.MatrixSimilarity(lda[corpus]) # transform corpus to LDA space and index it
 #index.save('capstone.index')
-index = similarities.MatrixSimilarity.load('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstone.index')
+index = similarities.MatrixSimilarity.load('C:/Users/joelm/Documents/Fall 2016/ds 6001/capstoneflaskapp/models/capstone.index')
 
 
 #Here's the query
