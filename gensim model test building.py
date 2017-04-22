@@ -21,14 +21,18 @@ data = pd.read_csv("C:/Users/Nick/Desktop/training_corpus_final.csv",encoding = 
 data['body'] = data['body'].astype(str)
 documents = data.body.tolist()
 
+for document in documents:
+	for word in document.lower().split():
+		word = re.sub(r'[^\w\s]','',word)
+  
 # remove common words and tokenize
 #stoplist = set('for a of the and to in '.split())
 stoplist = set(stopwords.words('english'))
 stoplist.update(['reddit','www','com','askhistorians','subreddit','imgur','for','a','of','the','and','to','in','would','*','http','org','en','comment','comments','could','would','also','really','-','/','u','r',',','?','--','!','|','<','>','=','+','[',']','{','}','d','s','m','its','dont','wont','cant','im'])
 
-for document in documents:
-	for word in document.lower().split():
-		word = re.sub(r'[^\w\s]','',word)
+#for document in documents:
+#	for word in document.lower().split():
+#		word = re.sub(r'[^\w\s]','',word)
 
 texts = [[word for word in document.lower().split() if word not in stoplist]
          for document in documents]
