@@ -169,7 +169,7 @@ def add_entry():
 @app.route('/topics')
 def list_topics():
     topics = lda.show_topics(num_topics=-1, num_words=5, formatted=True)
-    reg = re.compile('.+\\"(\\w+)\\"')
+    reg = re.compile('\"(\\S+)\"')
     words = [None] * 30
     whole = []
     for (i, j) in topics:

@@ -8,11 +8,11 @@ import re
 # Load in Models
 dictionary = corpora.Dictionary.load('./models/FINAL.dict')
 corpus = corpora.MmCorpus('./models/FINAL.mm')
-lda = gensim.models.LdaModel.load('./models/FINAL50.model')
-index = np.load('./models/FINALH50.npy')
+lda = gensim.models.LdaModel.load('./models/FINAL30.model')
+index = np.load('./models/FINALH30.npy')
 
 topics = lda.show_topics(num_topics=-1, num_words=5, formatted=True)
-reg = re.compile('.+\\"(\\w+)\\"')
+reg = re.compile('\"(\\S+)\"')
 words = [None] * 50
 whole = []
 for (i, j) in topics:
