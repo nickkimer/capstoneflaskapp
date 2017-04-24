@@ -12,7 +12,7 @@ from gensim import corpora, models, similarities
 dictionary = corpora.Dictionary.load('./models/FINAL.dict')
 corpus = corpora.MmCorpus('./models/FINAL.mm')
 model = models.Word2Vec.load('./models/word2vec.model')
-lda = gensim.models.LdaModel.load('./models/FINAL50.model')
+lda = gensim.models.LdaModel.load('./models/FINAL30.model')
 index = np.load('./models/FINALH50.npy')
 
 # Project Dashboard Route
@@ -170,7 +170,7 @@ def add_entry():
 def list_topics():
     topics = lda.show_topics(num_topics=-1, num_words=5, formatted=True)
     reg = re.compile('.+\\"(\\w+)\\"')
-    words = [None] * 50
+    words = [None] * 30
     whole = []
     for (i, j) in topics:
         temp = [None] * 6
