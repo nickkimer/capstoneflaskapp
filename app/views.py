@@ -13,12 +13,12 @@ dictionary = corpora.Dictionary.load('./models/FINAL.dict')
 corpus = corpora.MmCorpus('./models/FINAL.mm')
 model = models.Word2Vec.load('./models/word2vec.model')
 lda = gensim.models.LdaModel.load('./models/FINAL30.model')
-index = np.load('./models/FINALH50.npy')
+index = np.load('./models/FINALH30.npy')
 
 # Project Dashboard Route
 @app.route('/home')
 def home_page():
-    return render_template("pyldavis_final50.html")
+    return render_template("pyldavis_424.html")
 
 
 # Login Page Route
