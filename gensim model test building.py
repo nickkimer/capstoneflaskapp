@@ -97,11 +97,11 @@ corpus = corpora.MmCorpus('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capsto
 lda100 = models.LdaModel(corpus, id2word=dictionary, num_topics=100)
 lda100.save('FINAL100.model')
 #print(lda)
-lda40 = models.LdaModel(corpus, id2word=dictionary, num_topics=40)
-lda40.save('FINAL40.model')
+lda30 = models.LdaModel(corpus, id2word=dictionary, num_topics=30)
+lda30.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstoneflaskapp/models/FINAL30.model')
 
 lda50 = models.LdaModel(corpus, id2word=dictionary, num_topics=50)
-lda50.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstoneflaskapp/FINAL50.model')
+lda50.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstoneflaskapp/models/FINAL50.model')
 
 
 
@@ -153,10 +153,16 @@ import gensim.matutils
 vec_bow = dictionary.doc2bow(doc.lower().split())
 vec_lda = lda50[vec_bow] # convert the query to LDA space
 
+'''
+Do this for 30-topic topic model
+indexH30 = np.sqrt(gensim.matutils.corpus2dense(lda30[corpus], lda30.num_topics).T)
+np.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstoneflaskapp/models/FINALH30.npy',indexH30)
+'''
+
 # query index
 q = np.sqrt(gensim.matutils.sparse2full(vec_lda, lda50.num_topics))
 indexH50 = np.sqrt(gensim.matutils.corpus2dense(lda50[corpus], lda50.num_topics).T)
-#np.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstoneflaskapp/static/FINALH50.npy',indexH50)
+#np.save('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstoneflaskapp/models/FINALH50.npy',indexH50)
 #indexH50 = np.load('C:/Users/Nick/Desktop/DSI Spring 2017/capstone/capstoneflaskapp/static/FINALH50.npy')
 # calculate similarity score from script implementation
 sims = np.sqrt(0.5 * np.sum((q - indexH50)**2, axis=1))
