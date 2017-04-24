@@ -218,7 +218,7 @@ def create_dense_doc_topic():
     with sql.connect('static/mitre_2_full.db') as conn:
         cur = conn.cursor()
         result = cur.execute('SELECT * FROM doc_topic')
-        threshold = .2
+        threshold = .35
         dense_doc_topic = np.zeros([corpus.num_docs, lda.num_topics])
         for each in result.fetchall():
             doc_id = each[0]
