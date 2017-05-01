@@ -12,3 +12,5 @@ The topic models were created with the use of Python's Gensim package. A MM corp
 
 ### Web App
 The web app was built with the use of Python's Flask package and relied heavily on javascript. The app allows users to perform Document-to-Document similarity searches with a query, save documents of interest that appear in these results, view a lit of topics with the top 5 words in each topic, view a network diagram of the topics, and view the corpus through an intertopic distance map.
+#### To run Web App
+Web app is run with `python run.py`
