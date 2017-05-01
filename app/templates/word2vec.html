@@ -1,0 +1,23 @@
+{% extends 'template.html' %}
+
+{% block content %}
+<h1>Enter some text - We will display the most similar words from our Deep Learning Model</h1>
+<form action="/word2vec" method="POST">
+	<input type="text" name="text", style = 'width: 800px;'>
+	<input type="submit" name="my-form" value="Search">
+</form>
+
+{% if text %}
+
+<h3>You searched for "{{text}}"</h3>
+<h3>This is the result of the search: </h3>
+<div>
+	{% for item in result:%}
+	<li>
+		{{item[0]}}:{{item[1]}}
+	</li>
+	{% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}
