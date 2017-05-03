@@ -18,7 +18,7 @@ index = np.load('./models/FINALH30.npy')
 # Project Dashboard Route
 @app.route('/home')
 def home_page():
-    return render_template("pyldavis_424.html")
+    return render_template("pyldavis.html")
 
 
 # Login Page Route
@@ -35,7 +35,7 @@ def login():
 # Word2Vec routes
 @app.route('/word2vec')
 def blankword2vec():
-    return render_template("my-form.html")
+    return render_template("word2vec.html")
 @app.route('/word2vec', methods=['GET', 'POST'])
 def my_form_post():
     if request.method == 'POST':
@@ -46,7 +46,7 @@ def my_form_post():
             # indent=4,separators=(',', ': ')),
             'result':model.most_similar([processed_text]),
             'text':text}
-    return render_template("my-form.html", **templateData)
+    return render_template("word2vec.html", **templateData)
 
 # Route to documents saved by user
 @app.route('/savedoc', methods=['GET', 'POST'])
@@ -56,7 +56,7 @@ def addRegion():
 # Doc to Doc Similarity Routes
 @app.route('/docsim')
 def my_form2():
-    return render_template("my-form2.html")
+    return render_template("docsim.html")
 @app.route('/docsim', methods=['GET', 'POST'])
 def my_form_post2():
     if request.method == 'POST':
@@ -85,7 +85,7 @@ def my_form_post2():
             'text_sim':text_sim,
             'doc_topics2':doc_topics,
         }
-    return render_template("my-form2.html", **templateData2)
+    return render_template("docsim.html", **templateData2)
 
 #Get topics of docs in sim docsim
 def get_top_docs(doc_id):
