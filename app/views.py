@@ -270,10 +270,16 @@ def generate_network_file(associations, filename):
             if associations[node_id] != []:
                 terms = get_topic_terms(node_id, lda, dictionary)
                 if first:
-                    out += """\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
+                    out += """\t{\"id\":""" + str(node_id) + \
+                    """,\"label\":\"Topic """ + str(node_id) + ": " + terms[0][0] + \
+                    "\", \"title\":\"""" +  terms[0][0] + " " +  terms[1][0]  + " " +  \
+                    terms[2][0] + " " +  terms[3][0]  + " " +  terms[4][0] + "\"}"
                     first = False
                 else:
-                    out += """,\n\t{\"id\":""" + str(node_id) + """,\"label\":\"""" + terms[0][0] + " " + terms[1][0] +"\"}"
+                    out += """,\n\t{\"id\":""" + str(node_id) + \
+                    """,\"label\":\"Topic """ + str(node_id) + ": " + terms[0][0] + \
+                    "\", \"title\":\"""" +  terms[0][0] + " " +  terms[1][0]  + " " +  \
+                    terms[2][0] + " " +  terms[3][0]  + " " +  terms[4][0] + "\"}"
 
         out += """],\n"edges":["""
         first = True
