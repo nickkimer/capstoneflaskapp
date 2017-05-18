@@ -1,5 +1,7 @@
-from app import app
-import gensim, logging
+#from app import app
+from . import app
+import gensim
+import logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 from flask import Flask, jsonify, request, render_template, redirect, json, url_for
 import sqlite3 as sql
@@ -9,17 +11,17 @@ import gensim.matutils
 from gensim import corpora, models, similarities
 
 # Load in Models
-dictionary = corpora.Dictionary.load('./models/FINAL.dict')
-corpus = corpora.MmCorpus('./models/FINAL.mm')
-model = models.Word2Vec.load('./models/word2vec.model')
-lda = gensim.models.LdaModel.load('./models/FINAL30.model')
-index = np.load('./models/FINALH30.npy')
+APP_PATH = app.root_path
+dictionary = corpora.Dictionary.load(APP_PATH + '/models/FINAL.dict')
+corpus = corpora.MmCorpus(APP_PATH + '/models/FINAL.mm')
+model = models.Word2Vec.load(APP_PATH + '/models/word2vec.model')
+lda = gensim.models.LdaModel.load(APP_PATH + '/models/FINAL30.model')
+index = np.load(APP_PATH + '/models/FINALH30.npy')
 
 # Project Dashboard Route
 @app.route('/home')
 def home_page():
     return render_template("pyldavis.html")
-
 
 # Login Page Route
 @app.route('/', methods=['GET', 'POST'])
@@ -36,6 +38,7 @@ def login():
 @app.route('/word2vec')
 def blankword2vec():
     return render_template("word2vec.html")
+
 @app.route('/word2vec', methods=['GET', 'POST'])
 def my_form_post():
     if request.method == 'POST':
@@ -57,6 +60,7 @@ def addRegion():
 @app.route('/docsim')
 def my_form2():
     return render_template("docsim.html")
+
 @app.route('/docsim', methods=['GET', 'POST'])
 def my_form_post2():
     if request.method == 'POST':
@@ -188,16 +192,16 @@ def list_topics():
 # Route for network diagram
 @app.route('/visuals')
 def show_visuals():
-    filename = 'static/js/nodes.json'
+    filename = APP_PATH + '/static/js/nodes.json'
     dense_doc_topic = create_dense_doc_topic()
     associations = find_associated(dense_doc_topic)
-    filename = 'static/js/nodes.json'
+    filename = APP_PATH + '/static/js/nodes.json'
     generate_network_file(associations, filename)
     templateData = {'debug':associations}
     return render_template("visuals.html", **templateData)
 
 def build_doc_topics():
-    with sql.connect('static/mitre_2_full.db') as conn:
+    with sql.connect(APP_PATH + '/static/mitre_2_full.db') as conn:
         cur = conn.cursor()
         for each_doc in enumerate(corpus):
             doc_id = each_doc[0]
@@ -208,14 +212,14 @@ def build_doc_topics():
                 cur.execute('INSERT INTO doc_topic VALUES(?,?,?)', (doc_id, topic_id, percent))
 
 def get_top_docs(topic_id):
-    with sql.connect('static/mitre_2_full.db') as conn:
+    with sql.connect(APP_PATH + '/static/mitre_2_full.db') as conn:
         cur = conn.cursor()
         result = conn.execute('''SELECT doc_id FROM doc_topic WHERE topic_id == (?) ORDER BY
                                 percent DESC LIMIT 5''', (str(topic_id),))
     return result.fetchall()
 
 def create_dense_doc_topic():
-    with sql.connect('static/mitre_2_full.db') as conn:
+    with sql.connect(APP_PATH + '/static/mitre_2_full.db') as conn:
         cur = conn.cursor()
         result = cur.execute('SELECT * FROM doc_topic')
         threshold = .35
